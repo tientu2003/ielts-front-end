@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Provider } from "@/components/ui/provider"
 import React from "react";
+import {SessionWrapper} from "@/components/my-ui/session-wrapper";
 
 
 export const metadata: Metadata = {
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Provider>
-          {children}
+          <SessionWrapper>
+            {children}
+          </SessionWrapper>
         </Provider>
       </body>
     </html>

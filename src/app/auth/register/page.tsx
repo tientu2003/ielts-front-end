@@ -1,99 +1,90 @@
 'use client'
+import {AbsoluteCenter, Box, Button, Text, Heading, Input, Stack, VStack} from "@chakra-ui/react"
+import {Field} from "@/components/ui/field"
+import {useForm} from "react-hook-form"
+import TopNav from "@/components/my-ui/top-nav";
+import '@fontsource/dancing-script'; // Import the Dancing Script font
+import '@fontsource/lexend';
+import { PasswordInput } from "@/components/ui/password-input"
+import Link from "next/link";
 
-import {
-  Flex,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  HStack,
-  InputRightElement,
-  Stack,
-  Button,
-  Heading,
-  Text,
-  useColorModeValue,
-  Link,
-} from '@chakra-ui/react'
-import { useState } from 'react'
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
-
-export default function SignupCard() {
-  const [showPassword, setShowPassword] = useState(false)
-
-  return (
-    <Flex
-      minH={'100vh'}
-      align={'center'}
-      justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}>
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'}>
-          <Heading fontSize={'4xl'} textAlign={'center'}>
-            Sign up
-          </Heading>
-          <Text fontSize={'lg'} color={'gray.600'}>
-            to enjoy all of our cool features ✌️
-          </Text>
-        </Stack>
-        <Box
-          rounded={'lg'}
-          bg={useColorModeValue('white', 'gray.700')}
-          boxShadow={'lg'}
-          p={8}>
-          <Stack spacing={4}>
-            <HStack>
-              <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>First Name</FormLabel>
-                  <Input type="text" />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl id="lastName">
-                  <FormLabel>Last Name</FormLabel>
-                  <Input type="text" />
-                </FormControl>
-              </Box>
-            </HStack>
-            <FormControl id="email" isRequired>
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" />
-            </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <Input type={showPassword ? 'text' : 'password'} />
-                <InputRightElement h={'full'}>
-                  <Button
-                    variant={'ghost'}
-                    onClick={() => setShowPassword((showPassword) => !showPassword)}>
-                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-            <Stack spacing={10} pt={2}>
-              <Button
-                loadingText="Submitting"
-                size="lg"
-                bg={'blue.400'}
-                color={'white'}
-                _hover={{
-                  bg: 'blue.500',
-                }}>
-                Sign up
-              </Button>
-            </Stack>
-            <Stack pt={6}>
-              <Text align={'center'}>
-                Already a user? <Link color={'blue.400'}>Login</Link>
-              </Text>
-            </Stack>
-          </Stack>
-        </Box>
-      </Stack>
-    </Flex>
-  )
+interface FormValues {
+    userName: string
+    password: string
+    confirmPassword: string
 }
+
+
+const RegisterPage = () => {
+
+    const {
+        register,
+        handleSubmit,
+        formState: {errors},
+        watch
+    } = useForm<FormValues>();
+
+
+    const onSubmit = handleSubmit((data) => console.log(data))
+
+    const password = watch("password", "");
+
+    return <Box>
+        <TopNav/>
+        <form onSubmit={onSubmit}>
+            <AbsoluteCenter>
+                <Stack gap="4" minWidth={"sm"} maxW="sm">
+                    <Heading color={'teal.500'} size={'4xl'} >
+                        Sign in to your account
+                    </Heading>
+                    <Field
+                        label="User Name"
+                        invalid={!!errors.userName}
+                        errorText={errors.userName?.message}
+                    >
+                        <Input
+                            {...register("userName", {required: "User name is required"})}
+                        />
+                    </Field>
+                    <Field
+                        label="Password"
+                        invalid={!!errors.password}
+                        errorText={errors.password?.message}
+                    >
+                        <PasswordInput
+                            {...register("password", { required: "Password is required" })}
+                        />
+                    </Field>
+
+                    <Field
+                        label="Confirm Password"
+                        invalid={!!errors.confirmPassword}
+                        errorText={errors.confirmPassword?.message}
+                    >
+                        <PasswordInput
+                            {...register("confirmPassword", {
+                                required: "Confirm Password is required",
+                                validate: (value) => value === password || "Passwords do not match",
+                            })}
+                        />
+                    </Field>
+
+
+                    <VStack>
+                        <Button variant={'surface'} minWidth={"sm"} colorPalette={'blue'} type="submit">
+                            Sign Up
+                        </Button>
+                        <Text>Or</Text>
+                        <Link href='/auth/login'>
+                            <Button variant={'surface'} minWidth={"sm"} colorPalette={'teal'} >Sign In</Button>
+                        </Link>
+                    </VStack>
+                </Stack>
+            </AbsoluteCenter>
+        </form>
+    </Box>
+
+
+}
+
+export default RegisterPage;
