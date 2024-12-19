@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Provider } from "@/components/ui/provider"
 import React from "react";
 import {SessionWrapper} from "@/components/my-ui/session-wrapper";
-
+import '@fontsource/dancing-script'; // Import the Dancing Script font
+import '@fontsource/lexend';
+import {Box} from "@chakra-ui/react"; // Import Lexend font
 
 export const metadata: Metadata = {
   title: "English Practice",
@@ -16,10 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body >
         <Provider>
           <SessionWrapper>
-            {children}
+              {children}
           </SessionWrapper>
         </Provider>
       </body>

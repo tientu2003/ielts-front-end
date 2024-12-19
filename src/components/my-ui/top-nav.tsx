@@ -3,14 +3,16 @@ import {ColorModeButton} from "@/components/ui/color-mode";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import React from "react";
-import {Avatar} from "@/components/ui/avatar";
+import AccountLogin from "@/components/my-ui/top-nav/account-login";
 
 const TopNav = () => (
     <SimpleGrid columns={2} padding={5}>
         <Heading fontFamily="'Dancing Script', cursive" fontSize="4xl">
-            <Highlight query={'English Master'} styles={{color: "teal.500"}}>
-                English Master
-            </Highlight>
+            <Link href={'/'}>
+                <Highlight query={'English Master'} styles={{color: "teal.500"}}>
+                    English Master
+                </Highlight>
+            </Link>
         </Heading>
         <Flex gap="10" justify="flex-end">
             <Link href={'/'}>
@@ -18,23 +20,13 @@ const TopNav = () => (
                         Home
                 </Button>
             </Link>
-
-            <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={100}>Practice</Button>
-            <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>Community</Button>
-            <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={100}>Help</Button>
-            <ColorModeButton/>
-            <Link href="/auth/login">
-                <Button variant={'surface'} width={100} colorPalette="teal">
-                        Login
-                </Button>
+            <Link href={'/practice'}>
+                <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={100}>Practice</Button>
             </Link>
-            {/*<Link href="/auth/register">*/}
-            {/*    <Button variant={'surface'} width={100}>*/}
-            {/*            Register*/}
-            {/*    </Button>*/}
-            {/*</Link>*/}
-
-            {/*<Avatar name={'ABC'}/>*/}
+            <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>My Progress</Button>
+            <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>Resources</Button>
+            <ColorModeButton/>
+            <AccountLogin />
         </Flex>
     </SimpleGrid>
 )
