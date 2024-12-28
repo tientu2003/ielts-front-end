@@ -4,7 +4,8 @@ import React from "react";
 import {SessionWrapper} from "@/components/my-ui/session-wrapper";
 import '@fontsource/dancing-script'; // Import the Dancing Script font
 import '@fontsource/lexend';
-import {Box} from "@chakra-ui/react"; // Import Lexend font
+import {Box} from "@chakra-ui/react";
+import {Toaster} from "@/components/ui/toaster"; // Import Lexend font
 
 export const metadata: Metadata = {
   title: "English Practice",
@@ -23,6 +24,7 @@ export default function RootLayout({
           <SessionWrapper>
               {children}
           </SessionWrapper>
+          <Toaster />
         </Provider>
       </body>
     </html>

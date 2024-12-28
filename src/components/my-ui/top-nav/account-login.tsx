@@ -7,8 +7,10 @@ import {signOut, useSession} from "next-auth/react";
 import LoadingComponent from "@/components/my-ui/Loading";
 import {MenuRoot} from "@/components/ui/menu";
 import {MenuContent, MenuItem, MenuTrigger, Flex, Stack} from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
-const AccountLogin = () =>{
+const AccountLogin = () => {
+    const router = useRouter();
 
     const {data: session, status} = useSession();
 
@@ -16,7 +18,7 @@ const AccountLogin = () =>{
         return <LoadingComponent/>
     }
     if (status === "unauthenticated") {
-        return  <Link href="/auth/login">
+        return <Link href="/auth/login">
             <Button variant={'surface'} width={100} colorPalette="teal">
                 Login
             </Button>
@@ -40,14 +42,14 @@ const AccountLogin = () =>{
     }
 
     return <Stack alignItems="flex-end">
-        <MenuRoot >
-            <MenuTrigger width="150px">
+        <MenuRoot positioning={{placement: "left-end"}}>
+            <MenuTrigger asChild>
                 <Flex justify={"flex-end"}>
                     <Avatar name={session?.user?.name as string}/>
                 </Flex>
             </MenuTrigger>
-            <MenuContent width="150px">
-                <MenuItem onClick={() =>{}} value="history">
+            <MenuContent position={'absolute'} mt={10}>
+                <MenuItem onClick={() => router.push('/progress')} value="history">
                     Account
                 </MenuItem>
                 <MenuItem onClick={() => handleLogout()} value="sign-out">
@@ -55,6 +57,7 @@ const AccountLogin = () =>{
                 </MenuItem>
             </MenuContent>
         </MenuRoot>
+
     </Stack>
 
 }

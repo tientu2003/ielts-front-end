@@ -42,7 +42,7 @@ function PracticeExamCard({id, name, type}: PracticeTestData) {
                 </Flex>
             </Card.Header>
             <Card.Body>
-                <Card.Title mt="2" fontSize={'2xl'}>{name}</Card.Title>
+                <Card.Title mt="2" fontSize={'xl'}>{name}</Card.Title>
                 <Card.Description>
                     Complete practice test with 4 sections and 40 questions.
                 </Card.Description>
@@ -67,7 +67,7 @@ function PracticeExamCard({id, name, type}: PracticeTestData) {
                 </Flex>
             </Card.Header>
             <Card.Body>
-                <Card.Title mt="2" fontSize={'2xl'}>{name}</Card.Title>
+                <Card.Title mt="2" fontSize={'xl'}>{name}</Card.Title>
                 <Card.Description>
                     Practice test with 3 sections and passage-based questions.
                 </Card.Description>
@@ -93,7 +93,7 @@ function PracticeExamCard({id, name, type}: PracticeTestData) {
                 </Flex>
             </Card.Header>
             <Card.Body>
-                <Card.Title mt="2" fontSize={'2xl'}>{name}</Card.Title>
+                <Card.Title mt="2" fontSize={'xl'}>{name}</Card.Title>
                 <Card.Description>
                     Complete writing test with graph analysis and essay.
                 </Card.Description>
@@ -119,7 +119,7 @@ function PracticeExamCard({id, name, type}: PracticeTestData) {
                 </Flex>
             </Card.Header>
             <Card.Body>
-                <Card.Title mt="2" fontSize={'2xl'}>{name}</Card.Title>
+                <Card.Title mt="2" fontSize={'xl'}>{name}</Card.Title>
                 <Card.Description>
                     Practice all three parts of the speaking test.
                 </Card.Description>

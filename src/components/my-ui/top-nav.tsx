@@ -23,7 +23,9 @@ const TopNav = () => (
             <Link href={'/practice'}>
                 <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={100}>Practice</Button>
             </Link>
-            <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>My Progress</Button>
+            <Link href={'/progress'}>
+                <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>My Progress</Button>
+            </Link>
             <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>Resources</Button>
             <ColorModeButton/>
             <AccountLogin />

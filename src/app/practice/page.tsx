@@ -25,18 +25,27 @@ import PracticeTestList, {PracticeTestData} from "@/components/my-ui/practice-te
 import {useState, useEffect} from "react";
 const pageSize = 6
 
+interface ReadingListResponse {
+    id: string;
+    name: string;
+}
+
 const PracticePage = () =>{
 
     const [data, setData] = useState<PracticeTestData[]>([])
 
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         const res = await fetch('http://localhost:8082/')
-    //         const data = await res.json()
-    //         setData(data)
-    //     }
-    //     fetchData().then(r => console.log(r))
-    // }, [])
+    useEffect(() => {
+        async function fetchData() {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/public/api/reading/list`)
+            const data:ReadingListResponse[] = await res.json()
+            let resData:PracticeTestData[] = []
+            data.map(d => {
+                resData.push({id:d.id, name:d.name, type:"reading"})
+            })
+            setData(resData)
+        }
+        fetchData().then(r => console.log(r))
+    }, [])
 
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState(""); // State for search input
