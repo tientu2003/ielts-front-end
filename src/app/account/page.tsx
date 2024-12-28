@@ -1,10 +1,10 @@
 'use client'
-import {useSession, getSession} from "next-auth/react"
+import {useSession} from "next-auth/react"
 import {AbsoluteCenter, Heading, Text} from '@chakra-ui/react'
 import LoadingComponent from "@/components/my-ui/Loading";
 
 const AccountPage = () => {
-    const {data: session, status} = useSession()
+    const {data:session, status} = useSession()
 
     if (status === "loading") {
         return <LoadingComponent/>
