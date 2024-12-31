@@ -44,7 +44,7 @@ const ReadingPracticeResult = async ({params,}:
     }
 
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reading/user/${session.decodedToken?.sub}/answer/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session.decodedToken?.sub}/answer/${id}`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
@@ -53,7 +53,7 @@ const ReadingPracticeResult = async ({params,}:
         });
         const data = await response.json()
 
-        const responseQuestion = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reading/data/${data?.answerData?.testId}`,{
+        const responseQuestion = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/data/${data?.answerData?.testId}`,{
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
                 headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
@@ -72,7 +72,7 @@ const ReadingPracticeResult = async ({params,}:
         const correctAnswersPerPassage: number[] = [];
         let index = 0;
 
-        const reviewResponse =  await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reading/user/${session.decodedToken?.sub}/review`, {
+        const reviewResponse =  await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session.decodedToken?.sub}/review`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON

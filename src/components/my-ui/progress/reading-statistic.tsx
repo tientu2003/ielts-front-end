@@ -33,7 +33,7 @@ interface ReadingStatisticProps {
 const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
 
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reading/user/${session.decodedToken?.sub}/answer`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session.decodedToken?.sub}/answer`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON

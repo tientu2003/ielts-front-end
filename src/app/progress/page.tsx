@@ -49,7 +49,7 @@ const ProgressPage = async () => {
     try{
         // {{base_url}}/api/reading/user/{{user_id}}/review
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reading/user/${session.decodedToken?.sub}/review`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session.decodedToken?.sub}/review`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON

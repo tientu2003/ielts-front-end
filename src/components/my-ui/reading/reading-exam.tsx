@@ -128,7 +128,7 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
         };
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reading/user/${session?.decodedToken?.sub}/answer`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session?.decodedToken?.sub}/answer`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

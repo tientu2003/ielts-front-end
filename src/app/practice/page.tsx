@@ -36,7 +36,7 @@ const PracticePage = () =>{
 
     useEffect(() => {
         async function fetchData() {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/public/api/reading/list`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/public/api/reading/list`)
             const data:ReadingListResponse[] = await res.json()
             let resData:PracticeTestData[] = []
             data.map(d => {

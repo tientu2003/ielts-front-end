@@ -19,7 +19,7 @@ const ReadingExamPage = async ({params,}:
 
     }
     try{
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reading/data/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/data/${id}`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
