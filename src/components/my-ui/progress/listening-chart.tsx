@@ -1,19 +1,18 @@
 'use client'
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-import {ReadingListType} from "@/components/my-ui/progress/reading-statistic";
+import {ListeningListType} from "@/components/my-ui/progress/listening-statistic";
 
 
 interface ApexChartProps {
-    data: ReadingListType[];
+    data: ListeningListType[];
 }
 
-const ApexChart = ({data}:ApexChartProps) => {
-
+const ListeningApexChart = ({data}:ApexChartProps) => {
 
     // Transform data into chart format
     const chartData = data.map((item) => ({
-        x: new Date(item.createdAt).toLocaleString("en-GB", {
+        x: new Date(item.date).toLocaleString("en-GB", {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
@@ -35,14 +34,14 @@ const ApexChart = ({data}:ApexChartProps) => {
             chart: {
                 height: 400,
                 type: "line",
-                    zoom: { enabled: false },
+                zoom: { enabled: false },
             },
             dataLabels: { enabled: false },
             stroke: { curve: "smooth",
                 width: 2, // Set the weight of the line (thickness)
             },
             title: {
-                text: "IELTS Reading Scores",
+                text: "IELTS Listening Scores",
                 align: "left",
             },
             xaxis: {
@@ -63,7 +62,7 @@ const ApexChart = ({data}:ApexChartProps) => {
 
     return (
         <div>
-            <div id="reading-chart">
+            <div id="listeing-chart">
                 <ReactApexChart
                     options={state.options as any}
                     series={state.series}
@@ -75,4 +74,4 @@ const ApexChart = ({data}:ApexChartProps) => {
     );
 };
 
-export default ApexChart;
+export default ListeningApexChart;

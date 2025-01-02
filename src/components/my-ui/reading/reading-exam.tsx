@@ -1,7 +1,7 @@
 'use client'
 
-import {Box, Center, Text, GridItem, Heading, SimpleGrid, Tabs, Input, AbsoluteCenter} from "@chakra-ui/react";
-import {useState} from "react";
+import {Box, Center, Text, GridItem, Heading, SimpleGrid, Tabs, Input} from "@chakra-ui/react";
+import {useEffect, useState} from "react";
 import { InputGroup } from "@/components/ui/input-group"
 import {useExamContext} from "@/components/my-ui/exam-context-provider";
 import {useSession} from "next-auth/react";
@@ -77,6 +77,8 @@ const PassageComponent = ({
                                     <InputGroup p={2} startElement={<Text>{count + startIndex}</Text>}>
                                         <Input
                                             borderRadius={"10px"}
+                                            borderWidth={'2px'}
+                                            borderColor={answers[currentIndex]?.trim().length > 0 ? "blue.500" : "gray.200"}
                                             value={answers[currentIndex]} // Hiển thị giá trị từ `answers`
                                             onChange={(e) => onInputChange(currentIndex, e.target.value)}// Cập nhật giá trị
                                         />
@@ -97,7 +99,7 @@ interface ReadingExamComponentProps {
 }
 
 const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
-    const  {data:session, status} = useSession();
+    const  {data:session} = useSession();
     const {id} = useParams();
     const router = useRouter(); // Initialize the router hook
 
@@ -111,10 +113,11 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
             updatedAnswers[index] = value; // Cập nhật giá trị tại vị trí `index`
             return updatedAnswers;
         });
-        setSubmitFunction(submitAnswers)
     };
 
     const { setSubmitFunction } = useExamContext();
+    useEffect( () =>{setSubmitFunction(submitAnswers)},[answers])
+
 
     // Function submit được định nghĩa ở đây
     const submitAnswers = async (timeTaken: number) => {
@@ -141,7 +144,7 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
                 throw new Error("Something went wrong");
             }
 
-            const resId:string = await response.json();
+            const resId:string = await response.text();
             router.push(`/result/reading/${resId}`);
         } catch (error) {
             console.error("Submission failed:", error);

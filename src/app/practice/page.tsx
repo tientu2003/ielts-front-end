@@ -29,6 +29,10 @@ interface ReadingListResponse {
     id: string;
     name: string;
 }
+interface ListeningListResponse {
+    id: string;
+    testName: string;
+}
 
 const PracticePage = () =>{
 
@@ -36,15 +40,21 @@ const PracticePage = () =>{
 
     useEffect(() => {
         async function fetchData() {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/public/api/reading/list`)
-            const data:ReadingListResponse[] = await res.json()
+            const readRes = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/public/api/reading/list`)
+            const readData:ReadingListResponse[] = await readRes.json()
             let resData:PracticeTestData[] = []
-            data.map(d => {
+            readData.map(d => {
                 resData.push({id:d.id, name:d.name, type:"reading"})
+            })
+            const listRes = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/public/api/listening/list`)
+            const listenData:ListeningListResponse[] = await listRes.json()
+            listenData.map(d => {
+                resData.push({id:d.id, name:d.testName, type:"listening"})
             })
             setData(resData)
         }
         fetchData().then(r => console.log(r))
+
     }, [])
 
     const [page, setPage] = useState(1);

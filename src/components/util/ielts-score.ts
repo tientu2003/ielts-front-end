@@ -85,6 +85,95 @@ export function getScoreDescription(score: number): ScoreData | null {
     return exactMatch;
 }
 
+
+export type ListeningScoreData = {
+    band: number;
+    title: string;
+    details: string;
+    listeningRecommendation: string;
+};
+
+const listeningScores: ListeningScoreData[] = [
+    {
+        band: 9,
+        title: "Expert listener",
+        details: "The test taker has fully operational comprehension of spoken English. They understand complex accents, nuanced meanings, and subtle implications.",
+        listeningRecommendation: "Watch academic lectures (e.g., TED Talks), listen to podcasts on diverse topics, or watch movies without subtitles to refine comprehension."
+    },
+    {
+        band: 8,
+        title: "Very good listener",
+        details: "The test taker understands detailed spoken information and handles different accents well with occasional lapses in unfamiliar situations.",
+        listeningRecommendation: "Engage with audiobooks, news programs like BBC World Service, or podcasts featuring discussions on current affairs."
+    },
+    {
+        band: 7,
+        title: "Good listener",
+        details: "The test taker understands most spoken English, including detailed reasoning, though they may struggle with complex accents or rapid speech.",
+        listeningRecommendation: "Listen to interviews, documentaries, or clear and articulate speakers on platforms like NPR or BBC Learning English."
+    },
+    {
+        band: 6,
+        title: "Competent listener",
+        details: "The test taker understands straightforward spoken English and can follow discussions in familiar contexts.",
+        listeningRecommendation: "Focus on TV shows with clear pronunciation, beginner-friendly podcasts, or online courses with transcripts available."
+    },
+    {
+        band: 5,
+        title: "Modest listener",
+        details: "The test taker understands basic spoken English but may require repetition or slower speech for clarity.",
+        listeningRecommendation: "Listen to short, simple podcasts, children’s stories, or use language-learning apps with listening exercises."
+    },
+    {
+        band: 4,
+        title: "Limited listener",
+        details: "The test taker has difficulty understanding basic spoken English, especially in unfamiliar situations.",
+        listeningRecommendation: "Start with slow and clear spoken materials like 'BBC Learning English - English at the Movies' or beginner-level audio lessons."
+    },
+    {
+        band: 3,
+        title: "Extremely limited listener",
+        details: "The test taker can only understand simple phrases and words in very familiar contexts.",
+        listeningRecommendation: "Practice with audio flashcards, listen to children’s songs, or use apps with slow, repetitive listening exercises."
+    },
+    {
+        band: 2,
+        title: "Intermittent listener",
+        details: "The test taker understands only isolated words and phrases with significant difficulty.",
+        listeningRecommendation: "Begin with highly visual and repetitive audio materials like nursery rhymes or guided beginner lessons."
+    },
+    {
+        band: 1,
+        title: "Non-listener",
+        details: "The test taker has almost no ability to understand spoken English.",
+        listeningRecommendation: "Focus on recognizing basic sounds and words using phonics and simple audio lessons with visual aids."
+    },
+    {
+        band: 0,
+        title: "Did not attempt the test",
+        details: "The test taker did not answer the listening questions.",
+        listeningRecommendation: "Encourage them to start with basic listening exercises and build their confidence gradually."
+    },
+];
+
+export function getListeningScoreDescription(score: number): ListeningScoreData | null {
+    // Ensure the score is within the allowed range
+    if (score < 0 || score > 9 || (score * 10) % 5 !== 0) {
+        console.error("Invalid score. Please provide a score between 0 and 9, including increments of 0.5.");
+        return null;
+    }
+
+    // Find the closest band match
+    const exactMatch = listeningScores.find((entry) => entry.band === Math.floor(score));
+    if (!exactMatch) {
+        console.error("Score data not found.");
+        return null;
+    }
+
+    return exactMatch;
+}
+
+
 export const getScoreColor = (score: number) => {
     if (score < 4) return "red";
     if (score < 6) return "orange";

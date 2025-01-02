@@ -15,6 +15,7 @@ import {Avatar} from "@/components/ui/avatar";
 import React from "react";
 import TargetScore from "@/components/my-ui/progress/target-score";
 import ReadingStatistic from "@/components/my-ui/progress/reading-statistic";
+import ListeningStatistic from "@/components/my-ui/progress/listening-statistic";
 
 
 export interface ReadingOverallType {
@@ -30,6 +31,14 @@ interface AllScoresType {
     score: number;
 }
 
+export interface ListeningSummaryType{
+    userId: string,
+    averageScore: number,
+    personalRecommendation: string|null,
+    nextTestId: string,
+    testName: string
+}
+
 const ProgressPage = async () => {
     const session = await getServerSession(authOptions)
 
@@ -43,13 +52,10 @@ const ProgressPage = async () => {
         </Box>)
     }
 
-
-
-
     try{
         // {{base_url}}/api/reading/user/{{user_id}}/review
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session.decodedToken?.sub}/review`, {
+        const readingResponse = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session.decodedToken?.sub}/review`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
@@ -57,15 +63,25 @@ const ProgressPage = async () => {
             }
         });
 
-        const readingOverall: ReadingOverallType = await response.json();
+        const readingOverall: ReadingOverallType = await readingResponse.json();
+
+        const listeningResponse = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/${session.decodedToken?.sub}/summary`, {
+            method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
+            headers: {
+                'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
+                'Authorization': `Bearer ${session.access_token}`,  // Add Bearer token to the request headers
+            }
+        });
 
 
+        const listeningSummary:ListeningSummaryType = await listeningResponse.json();
 
         const targetScore = 9.0
 
         const averageReadingScore = convertToIELTSBand(readingOverall["averageScore"])
+        const averageListeningScore  = convertToIELTSBand(listeningSummary.averageScore)
 
-        const currentScore = averageReadingScore;
+        const currentScore = convertToIELTSBand((averageReadingScore + averageListeningScore)/2)
 
         return (<Box pl={20} pr={20}>
             <Box borderRadius={'md'} borderWidth={1}>
@@ -134,7 +150,7 @@ const ProgressPage = async () => {
 
                     </Tabs.List>
                     <Tabs.Content value="reading"> <ReadingStatistic data={readingOverall} session={session}/></Tabs.Content>
-                    <Tabs.Content value="listening">Listening</Tabs.Content>
+                    <Tabs.Content value="listening"><ListeningStatistic data={listeningSummary} session={session} /></Tabs.Content>
                     <Tabs.Content value="writing">Writing</Tabs.Content>
                     <Tabs.Content value="speaking">Speaking</Tabs.Content>
                 </Tabs.Root>

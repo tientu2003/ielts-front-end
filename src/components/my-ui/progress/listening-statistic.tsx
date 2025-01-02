@@ -1,39 +1,43 @@
 import {
-    SimpleGrid,
-    Table,
-    Stack,
-    Heading,
-    Text,
-    Box,
-    Container,
+    AbsoluteCenter,
+    Box, Button, Card,
     Center,
+    Container,
+    Heading,
     HStack,
-    AbsoluteCenter
+    SimpleGrid,
+    Stack,
+    Table,
+    Text
 } from "@chakra-ui/react";
-import {ReadingOverallType} from "@/app/progress/page";
-import ReadingTableRow from "@/components/my-ui/progress/reading-table-row";
-import ApexChart from "@/components/my-ui/progress/reading-chart";
-import React from "react";
+import {ListeningSummaryType} from "@/app/progress/page";
 import {Session} from "next-auth";
+import React from "react";
+import ListeningTableRow from "@/components/my-ui/progress/listening-table-row";
+import ListeningApexChart from "@/components/my-ui/progress/listening-chart";
+import Link from "next/link";
 
-export interface ReadingListType {
+interface ListeningStatisticProps {
+    data: ListeningSummaryType,
+    session: Session
+}
+function convertToIELTSBand(score: number) {
+    // Round to the nearest 0.5
+    return Math.round(score * 2) / 2;
+}
+
+export interface ListeningListType   {
     id: string,
-    recordId: string,
-    createdAt: string,
-    testName: string,
+    name: string,
     score: number,
-    data?: ReadingListType
+    date:  string
 }
+// '2025-01-02T10:29:05.803Z'
 
-interface ReadingStatisticProps {
-    data: ReadingOverallType,
-    session: Session,
-}
-
-const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
+const ListeningStatistic = async ({data, session}: ListeningStatisticProps) => {
 
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session.decodedToken?.sub}/answer`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/${session.decodedToken?.sub}/answer`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
@@ -41,13 +45,12 @@ const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
             }
         });
 
-        const readingList: ReadingListType[] = await response.json();
-
+        const listeningList:ListeningListType[] = await response.json();
 
         return (
             <SimpleGrid columns={{sm: 1, md: 2}} gap={5} pr={5}>
                 <Stack width="full" gap="5">
-                    <Heading size="xl">Reading Practice History</Heading>
+                    <Heading size="xl">Listening Practice History</Heading>
                     <Table.ScrollArea borderWidth="1px" rounded="md" height="xl">
                         <Table.Root size="sm" variant="outline" interactive stickyHeader>
                             <Table.Header>
@@ -58,9 +61,9 @@ const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {readingList.map((item,index) => (
-                                    <ReadingTableRow key={index} data={item}/>
-                                ))}
+                                {listeningList.map((item) =>
+                                    <ListeningTableRow data={item}  />
+                                )}
                             </Table.Body>
                         </Table.Root>
                     </Table.ScrollArea>
@@ -75,7 +78,7 @@ const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
                                 <Box borderRadius={100} w={100} h={100} borderWidth={10} borderColor={'green.400'}>
                                     <Center h={20}>
                                         <Text color={'green.400'} fontWeight={'bold'} fontSize={'4xl'}>
-                                            {readingList.length}
+                                            {listeningList.length}
                                         </Text>
                                     </Center>
                                 </Box>
@@ -102,9 +105,26 @@ const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
                                 <Heading>Total Time</Heading>
                             </Container>
                         </HStack>
-                        <ApexChart data={readingList}/>
+                        <ListeningApexChart data={listeningList}/>
                     </Box>
 
+                </Stack>
+                <Stack>
+                    <Card.Root >
+                        <Card.Header>
+                            <Heading>Next Practice</Heading>
+                        </Card.Header>
+                        <Card.Body>
+                            <HStack>
+                                <Heading>{data.testName}</Heading>
+                                <Link href={`/exam/listening/${data.nextTestId}`}>
+                                    <Button variant={'ghost'} color={'blue.500'} fontWeight={'bold'} fontSize={'xl'}>
+                                        Start
+                                    </Button>
+                                </Link>
+                            </HStack>
+                        </Card.Body>
+                    </Card.Root>
                 </Stack>
             </SimpleGrid>
         )
@@ -114,12 +134,6 @@ const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
             Internal Error
         </AbsoluteCenter>
     }
-
 }
 
-function convertToIELTSBand(score: number) {
-    // Round to the nearest 0.5
-    return Math.round(score * 2) / 2;
-}
-
-export default ReadingStatistic;
+export default ListeningStatistic;
