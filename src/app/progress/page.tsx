@@ -10,7 +10,7 @@ import {
     Tabs
 } from "@chakra-ui/react";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import {authOptions} from "@/components/util/auth-options"; // Import jsonwebtoken to decode the JWT
 import {Avatar} from "@/components/ui/avatar";
 import React from "react";
 import TargetScore from "@/components/my-ui/progress/target-score";

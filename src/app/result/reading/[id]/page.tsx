@@ -22,10 +22,10 @@ import {
     HoverCardRoot,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import {ProgressBar, ProgressRoot, ProgressValueText} from "@/components/ui/progress";
+import {ProgressBar, ProgressRoot} from "@/components/ui/progress";
 import Link from "next/link";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import {authOptions} from "@/components/util/auth-options"; // Import jsonwebtoken to decode the JWT
 const ReadingPracticeResult = async ({params,}:
                                      { params: Promise<{ id: string }>})  =>{
     const id = (await params).id
@@ -89,7 +89,7 @@ const ReadingPracticeResult = async ({params,}:
         const averageScore = convertToIELTSBand(averageData?.averageScore)
 
         // Processing Data
-        passageQuestionNumber.forEach((questions, passageIndex) => {
+        passageQuestionNumber.forEach((questions) => {
             const correctAnswers = data.userAnswers.slice(index, index + questions).filter((answer:any) => answer.check).length;
             correctAnswersPerPassage.push(correctAnswers);
             index += questions;

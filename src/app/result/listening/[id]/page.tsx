@@ -1,5 +1,5 @@
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import {authOptions} from "@/components/util/auth-options"; // Import jsonwebtoken to decode the JWT
 import {
     AbsoluteCenter,
     Box,
