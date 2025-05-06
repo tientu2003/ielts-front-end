@@ -20,6 +20,7 @@ import {useExamContext} from "@/components/my-ui/exam-context-provider";
 import AudioPlayer from "@/components/my-ui/listening/audio-player";
 import {InputGroup} from "@/components/ui/input-group";
 import {Radio, RadioGroup} from "@/components/ui/radio"
+import {reading_listening_inti_state} from "@/components/my-ui/common/common-function";
 
 export interface Recording {
     audioUrl: string;
@@ -54,7 +55,7 @@ const RecordingComponent = ({
 }) => {
 
     return (
-        <SimpleGrid h={'800px'} pl={200} pr={200}>
+        <SimpleGrid h={'80vh'} pl={'10%'} pr={'10%'}>
             <Box>
                 <HStack mt={2}>
                     <Heading w={'150px'}>
@@ -163,21 +164,8 @@ interface ListeningExamProps {
 
 const ListeningExamComponent = ({session, data, id}: ListeningExamProps) => {
 
-    const router = useRouter();
+    const {router, value, setValue, answers, handleInputChange} = reading_listening_inti_state();
 
-    const [value, setValue] = useState<string | null>("first")
-
-    const [answers, setAnswers] = useState<string[]>(Array(40).fill(""));
-
-
-    const handleInputChange = (index: number, value: string) => {
-        setAnswers((prev) => {
-            const updatedAnswers = [...prev];
-            updatedAnswers[index] = value; // Cập nhật giá trị tại vị trí `index`
-            return updatedAnswers;
-        });
-
-    };
 
 
     useEffect( () =>{setSubmitFunction(submitAnswers)},[answers])
@@ -196,7 +184,7 @@ const ListeningExamComponent = ({session, data, id}: ListeningExamProps) => {
         };
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/${session.decodedToken?.sub}/answer`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/answer`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

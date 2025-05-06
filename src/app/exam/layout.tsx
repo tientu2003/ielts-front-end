@@ -15,7 +15,7 @@ export default function ExamLayout({
     const type = pathSegments[1] || "default"; // Get second segment (e.g., "reading"), fallback to "default"
 
     return (
-        <Box>
+        <Box >
             <ExamProvider>
                 <TopExamNav type={type}/>
                 {children}

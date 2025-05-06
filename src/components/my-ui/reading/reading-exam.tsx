@@ -1,12 +1,12 @@
 'use client'
 
 import {Box, Center, Text, GridItem, Heading, SimpleGrid, Tabs, Input} from "@chakra-ui/react";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import { InputGroup } from "@/components/ui/input-group"
 import {useExamContext} from "@/components/my-ui/exam-context-provider";
 import {useSession} from "next-auth/react";
 import {useParams} from "next/navigation";
-import { useRouter } from 'next/navigation'; // Import useRouter at the top
+import {reading_listening_inti_state} from "@/components/my-ui/common/common-function"; // Import useRouter at the top
 
 
 
@@ -14,7 +14,6 @@ interface Passage{
     articleName: string;
     paragraphs: Array<paragraph>;
     questionGroups: Array<QuestionGroup>;
-    numberOfQuestions: number;
 }
 
 interface paragraph{
@@ -42,13 +41,18 @@ const PassageComponent = ({
 
     let count = 0;
 
-    const formatText = (text:string) => {
-        // Replace all capitalized words with a styled <span>
-        return text.replace(/\b[A-Z]+\b/g, (match) => `<span style="font-weight: bold; color: red;">${match}</span>`);
+    const formatText = (text: string) => {
+        const keywords = ['NO', 'MORE', 'THAN', 'TWO', 'WORDS', 'ONE', 'WORD', 'ONLY', 'THREE', 'TRUE', 'FALSE', 'NOT GIVEN'];
+        let formattedText = text;
+        formattedText = keywords.reduce((acc, keyword) => {
+            const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+            return acc.replace(regex, `<span style="font-weight: bold; color: red;">${keyword}</span>`);
+        }, formattedText);
+        return formattedText.replace(/\b[A-Z](?![A-Z])\b/g, match => `<span style="font-weight: bold; color: red;">${match}</span>`);
     };
 
     return (
-        <SimpleGrid columns={2} h={'800px'} divideX={'2px'} border={'2px solid'}  borderColor={'gray.200'}>
+        <SimpleGrid columns={2} h={'80vh'} divideX={'2px'} border={'2px solid'}  borderColor={'gray.200'}>
             <Box p={5} overflowY="auto">
                 <GridItem>
                     <Heading>
@@ -101,19 +105,17 @@ interface ReadingExamComponentProps {
 const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
     const  {data:session} = useSession();
     const {id} = useParams();
-    const router = useRouter(); // Initialize the router hook
+    const {router, value, setValue, answers, handleInputChange} = reading_listening_inti_state();
 
-    const [value, setValue] = useState<string | null>("first")
-
-    const [answers, setAnswers] = useState<string[]>(Array(40).fill(""));
-
-    const handleInputChange = (index: number, value: string) => {
-        setAnswers((prev) => {
-            const updatedAnswers = [...prev];
-            updatedAnswers[index] = value; // Cập nhật giá trị tại vị trí `index`
-            return updatedAnswers;
-        });
+    const getTotalQuestions = (passage: Passage): number => {
+        return passage.questionGroups.reduce((total, group) => total + group.questions.length, 0);
     };
+
+    const startIndexes = data.reduce((acc: number[], passage, index) => {
+        if (index === 0) return [0];
+        return [...acc, acc[index - 1] + getTotalQuestions(data[index - 1])];
+    }, []);
+
 
     const { setSubmitFunction } = useExamContext();
     useEffect( () =>{setSubmitFunction(submitAnswers)},[answers])
@@ -131,7 +133,7 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
         };
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session?.decodedToken?.sub}/answer`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/answer`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -161,14 +163,14 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
             </Tabs.Content>
             <Tabs.Content value="second">
                 <PassageComponent data={data[1]}
-                                  startIndex={data[0].numberOfQuestions }
+                                  startIndex={startIndexes[1]}
                                   answers={answers}
                                   onInputChange={handleInputChange}
                 />
             </Tabs.Content>
             <Tabs.Content value="third">
                 <PassageComponent data={data[2]}
-                                  startIndex={data[1].numberOfQuestions + data[0].numberOfQuestions}
+                                  startIndex={startIndexes[2]}
                                   answers={answers}
                                   onInputChange={handleInputChange}
                 />

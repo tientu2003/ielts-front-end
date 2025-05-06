@@ -39,7 +39,7 @@ const ListeningPracticeResult =  async ({params,}:
     }
 
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/${session.decodedToken?.sub}/answer/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/answer/${id}`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
@@ -55,7 +55,7 @@ const ListeningPracticeResult =  async ({params,}:
 
         const accuracyScoreColor = getScoreColor(averageAccuracy)
         const recordingQuestionNumber = data?.answer?.numberQuestions
-        const reviewResponse =  await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/${session.decodedToken?.sub}/summary`, {
+        const reviewResponse =  await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/summary`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
