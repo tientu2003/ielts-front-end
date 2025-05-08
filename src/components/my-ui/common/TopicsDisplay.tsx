@@ -3,12 +3,13 @@ import { Text } from "@chakra-ui/react";
 import {useColorMode} from "@/components/ui/color-mode";
 
 interface TopicsDisplayProps {
-    topics: string[]
+    topics: string[],
+    fontSize?: string,
 }
 
 
 
-const TopicsDisplay = ({topics}: TopicsDisplayProps) => {
+const TopicsDisplay = ({topics, fontSize}: TopicsDisplayProps) => {
     // write a function to get color from topic
     const getTopicColor = (topic: string): string => {
         let hash = 0;
@@ -25,7 +26,7 @@ const TopicsDisplay = ({topics}: TopicsDisplayProps) => {
 
     topics = Array.from(new Set(topics))
     return <Text
-            fontSize={'sm'}
+            fontSize={  fontSize ? fontSize :'sm'}
             fontWeight={'bold'}
             textOverflow="ellipsis"
             overflow="hidden"

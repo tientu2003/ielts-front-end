@@ -177,6 +177,6 @@ export function getListeningScoreDescription(score: number): ListeningScoreData 
 export const getScoreColor = (score: number) => {
     if (score < 4) return "red";
     if (score < 6) return "orange";
-    if (score < 7.5) return "cyan";
+    if (score < 7.5) return "blue";
     return "green";
 };
