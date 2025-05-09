@@ -21,6 +21,7 @@ import AudioPlayer from "@/components/my-ui/listening/audio-player";
 import {InputGroup} from "@/components/ui/input-group";
 import {Radio, RadioGroup} from "@/components/ui/radio"
 import {reading_listening_inti_state} from "@/components/my-ui/common/common-function";
+import {toaster} from "@/components/ui/toaster";
 
 export interface Recording {
     audioUrl: string;
@@ -194,7 +195,10 @@ const ListeningExamComponent = ({session, data, id}: ListeningExamProps) => {
             });
 
             if(response.status !== 201) {
-                throw new Error("Something went wrong");
+                toaster.create({
+                    description: "Something went wrong",
+                    type: "error",
+                });
             }
 
             const resId = await response.text();

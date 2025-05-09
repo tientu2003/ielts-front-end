@@ -1,16 +1,15 @@
 'use client'
 
-import {Box, Center, Text, GridItem, Heading, SimpleGrid, Tabs, Input} from "@chakra-ui/react";
+import {Center, Tabs} from "@chakra-ui/react";
 import {useEffect} from "react";
-import { InputGroup } from "@/components/ui/input-group"
 import {useExamContext} from "@/components/my-ui/exam-context-provider";
 import {useSession} from "next-auth/react";
 import {useParams} from "next/navigation";
-import {reading_listening_inti_state} from "@/components/my-ui/common/common-function"; // Import useRouter at the top
+import {reading_listening_inti_state} from "@/components/my-ui/common/common-function";
+import {toaster} from "@/components/ui/toaster";
+import PassageComponent from "@/components/my-ui/reading/PassageComponent";
 
-
-
-interface Passage{
+export interface Passage{
     articleName: string;
     paragraphs: Array<paragraph>;
     questionGroups: Array<QuestionGroup>;
@@ -26,76 +25,6 @@ interface QuestionGroup{
     diagramUrl: string;
     readingTestType: string;
     questions: Array<string>;
-}
-
-const PassageComponent = ({
-      data,
-      startIndex,
-      answers,
-      onInputChange}: {
-    data: Passage;
-    startIndex: number;
-    answers: string[];
-    onInputChange: (index: number, value: string) => void;
-}) => {
-
-    let count = 0;
-
-    const formatText = (text: string) => {
-        const keywords = ['NO', 'MORE', 'THAN', 'TWO', 'WORDS', 'ONE', 'WORD', 'ONLY', 'THREE', 'TRUE', 'FALSE', 'NOT GIVEN'];
-        let formattedText = text;
-        formattedText = keywords.reduce((acc, keyword) => {
-            const regex = new RegExp(`\\b${keyword}\\b`, 'g');
-            return acc.replace(regex, `<span style="font-weight: bold; color: red;">${keyword}</span>`);
-        }, formattedText);
-        return formattedText.replace(/\b[A-Z](?![A-Z])\b/g, match => `<span style="font-weight: bold; color: red;">${match}</span>`);
-    };
-
-    return (
-        <SimpleGrid columns={2} h={'80vh'} divideX={'2px'} border={'2px solid'}  borderColor={'gray.200'}>
-            <Box p={5} overflowY="auto">
-                <GridItem>
-                    <Heading>
-                        {data.articleName === null || data.articleName === "null" ? null: data.articleName}
-                    </Heading>
-                    {data.paragraphs.map((p, i) =>{
-                        return (<Box key={i}>
-                            {p.title === null || p.title === "null" ? null : <Text fontWeight={'bold'}>{p.title}</Text> }
-                            {p.paragraph === null || p.paragraph === "null" ? null :  <Text>{p.paragraph}</Text> }
-                            </Box>)
-                    })}
-                </GridItem>
-            </Box>
-            <Box p={5} overflowY="auto">
-                <GridItem>
-                    {data.questionGroups.map((qG, i) =>{
-                        return (<Box key={i}>
-                            {qG.context.map((c, j) => {
-                                return  <Text key={j} dangerouslySetInnerHTML={{ __html: formatText(c) }} />
-                            })}
-                            {qG.questions.map((q, j) =>{
-                                const currentIndex = count + startIndex; // Tính chỉ số trong mảng `answers`
-                                count++;
-                                return <Box key={j}>
-                                    {q === "null" ? null: <Text>{(count + startIndex) + ". " +q}</Text>}
-                                    <InputGroup p={2} startElement={<Text>{count + startIndex}</Text>}>
-                                        <Input
-                                            borderRadius={"10px"}
-                                            borderWidth={'2px'}
-                                            borderColor={answers[currentIndex]?.trim().length > 0 ? "blue.500" : "gray.200"}
-                                            value={answers[currentIndex]} // Hiển thị giá trị từ `answers`
-                                            onChange={(e) => onInputChange(currentIndex, e.target.value)}// Cập nhật giá trị
-                                        />
-                                    </InputGroup>
-                                </Box>
-                            })}
-                        </Box>)
-                    })}
-
-                </GridItem>
-            </Box>
-        </SimpleGrid>
-    )
 }
 
 interface ReadingExamComponentProps {
@@ -143,7 +72,10 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
             });
 
             if(response.status !== 201) {
-                throw new Error("Something went wrong");
+                toaster.create({
+                    description: "Something went wrong",
+                    type: "error",
+                });
             }
 
             const resId:string = await response.text();

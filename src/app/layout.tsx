@@ -4,7 +4,6 @@ import React from "react";
 import {SessionWrapper} from "@/components/my-ui/session-wrapper";
 import '@fontsource/dancing-script'; // Import the Dancing Script font
 import '@fontsource/lexend';
-import {Box} from "@chakra-ui/react";
 import {Toaster} from "@/components/ui/toaster"; // Import Lexend font
 
 export const metadata: Metadata = {
@@ -18,7 +17,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
       <body >
         <Provider>
           <SessionWrapper>
@@ -27,6 +25,5 @@ export default function RootLayout({
           <Toaster />
         </Provider>
       </body>
-    </html>
   );
 }

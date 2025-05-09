@@ -21,6 +21,7 @@ import {ProgressBar, ProgressRoot} from "@/components/ui/progress";
 import Link from "next/link";
 import React from "react";
 import AudioPlayer from "@/components/my-ui/listening/audio-player";
+import HandleUnauthorized from "@/components/util/HandleUnauthorized";
 
 
 const ListeningPracticeResult =  async ({params,}:
@@ -46,6 +47,14 @@ const ListeningPracticeResult =  async ({params,}:
                 'Authorization': `Bearer ${session.access_token}`,  // Add Bearer token to the request headers
             }
         });
+
+        if(response.status === 401){
+            return <AbsoluteCenter>
+                Login is expired, please login again.
+                <HandleUnauthorized />
+            </AbsoluteCenter>
+        }
+
         const data = await response.json()
 
         const bandScoreDescription = getListeningScoreDescription(data.score);

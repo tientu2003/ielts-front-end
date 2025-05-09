@@ -6,14 +6,14 @@ import {
     Center,
     Text,
     Stack,
-    HStack, AbsoluteCenter, Tabs, GridItem, Accordion, Button, Flex
+    HStack, AbsoluteCenter, Tabs, GridItem, Accordion, Flex
 } from "@chakra-ui/react";
 import {
     ProgressCircleRing,
     ProgressCircleRoot,
     ProgressCircleValueText
 } from "@/components/ui/progress-circle"
-import { IoIosArrowDown } from "react-icons/io";
+import {IoIosArrowDown} from "react-icons/io";
 import {getScoreColor, getScoreDescription} from "@/components/util/ielts-score";
 import {LuInfo} from "react-icons/lu";
 import {
@@ -25,9 +25,10 @@ import {
 import {ProgressBar, ProgressRoot} from "@/components/ui/progress";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/components/util/auth-options";
-import { toaster } from "@/components/ui/toaster";
-import {signOut, useSession} from "next-auth/react";
 import TopicsDisplay from "@/components/my-ui/common/TopicsDisplay";
+import HandleUnauthorized from "@/components/util/HandleUnauthorized";
+import PassageComponent from "@/components/my-ui/reading/PassageComponent";
+
 const ReadingPracticeResult = async ({params,}:
                                      { params: Promise<{ id: string }> }) => {
     const id = (await params).id
@@ -41,7 +42,6 @@ const ReadingPracticeResult = async ({params,}:
                 </Heading>
             </AbsoluteCenter>
         </Box>)
-
     }
 
     try {
@@ -53,24 +53,11 @@ const ReadingPracticeResult = async ({params,}:
             }
         });
 
-        if(response.status === 401){
-            toaster.create({
-                description: `You should relogin to see result of this exam.`,
-                type: "error",
-            });
-            const { data: session } = useSession();
-            const idToken = session?.id_token;
-            if (idToken) {
-                signOut({
-                    redirect: false
-                }).then(() => {
-                    const logoutUrl = process.env.NEXT_PUBLIC_KEYCLOAK_LOGOUT_URL;
-                    window.location.href = `${logoutUrl}?id_token_hint=${idToken}&post_logout_redirect_uri=${window.location.origin}`;
-                });
-                window.location.href = '/auth/login';
-            } else {
-                console.error("ID Token not found");
-            }
+        if (response.status === 401) {
+            return <AbsoluteCenter>
+                    Login is expired, please login again.
+                <HandleUnauthorized />
+            </AbsoluteCenter>
         }
 
         const data = await response.json()
@@ -161,34 +148,34 @@ const ReadingPracticeResult = async ({params,}:
                                         </Stack>
                                     </Card.Body>
                                     <Card.Footer>
-                                         <Accordion.ItemTrigger >
-                                             <Flex
-                                                 justify="space-between"
-                                                 alignItems="center"
-                                                 width={'full'}
-                                                 borderColor={'blue.500'}
-                                                 borderWidth={1}
-                                                 borderRadius={'md'}
-                                                 p={2}
-                                                 bg={'blue.50'}
-                                                 _dark={{
-                                                     bg: 'blue.900',
-                                                     _hover: {bg: 'blue.800'}
-                                                 }}
-                                                 _light={{
-                                                     bg: 'blue.50',
-                                                     _hover: {bg: 'blue.100'}
-                                                 }}
-                                                 cursor={'pointer'}
-                                                 transition={'all 0.2s'}
-                                             >
-                                                 <Text colorPalette={'blue'}>
-                                                     Click here to see detail
-                                                 </Text>
-                                                 <Accordion.ItemIndicator>
-                                                     <IoIosArrowDown/>
-                                                 </Accordion.ItemIndicator>
-                                             </Flex>
+                                        <Accordion.ItemTrigger>
+                                            <Flex
+                                                justify="space-between"
+                                                alignItems="center"
+                                                width={'full'}
+                                                borderColor={'blue.500'}
+                                                borderWidth={1}
+                                                borderRadius={'md'}
+                                                p={2}
+                                                bg={'blue.50'}
+                                                _dark={{
+                                                    bg: 'blue.900',
+                                                    _hover: {bg: 'blue.800'}
+                                                }}
+                                                _light={{
+                                                    bg: 'blue.50',
+                                                    _hover: {bg: 'blue.100'}
+                                                }}
+                                                cursor={'pointer'}
+                                                transition={'all 0.2s'}
+                                            >
+                                                <Text colorPalette={'blue'}>
+                                                    Click here to see detail
+                                                </Text>
+                                                <Accordion.ItemIndicator>
+                                                    <IoIosArrowDown/>
+                                                </Accordion.ItemIndicator>
+                                            </Flex>
                                         </Accordion.ItemTrigger>
                                     </Card.Footer>
                                 </Card.Root>
@@ -213,7 +200,8 @@ const ReadingPracticeResult = async ({params,}:
                                             <Stack>
                                                 <Text fontWeight="semibold" color={bandScoreColor}
                                                       fontSize={'xl'}>{bandScoreDescription?.title}</Text>
-                                                <Text fontSize={'sm'}>{bandScoreDescription?.readingRecommendation}</Text>
+                                                <Text
+                                                    fontSize={'sm'}>{bandScoreDescription?.readingRecommendation}</Text>
                                             </Stack>
                                             <ProgressCircleRoot size={"xl"} value={(data.score / 9) * 100}
                                                                 colorPalette={bandScoreColor}>
@@ -235,12 +223,15 @@ const ReadingPracticeResult = async ({params,}:
                                                 <HoverCardTrigger><LuInfo/> </HoverCardTrigger>
                                                 <HoverCardContent>
                                                     <HoverCardArrow/>
-                                                    <Text>Accuracy in the IELTS Reading test is the percentage of correct
+                                                    <Text>Accuracy in the IELTS Reading test is the percentage of
+                                                        correct
                                                         answers
                                                         out
-                                                        of the total questions in each passage or the section as a whole. It
+                                                        of the total questions in each passage or the section as a
+                                                        whole. It
                                                         reflects
-                                                        a candidate's reading comprehension,attention to detail, and ability to
+                                                        a candidate's reading comprehension,attention to detail, and
+                                                        ability to
                                                         interpret
                                                         information effectively.</Text>
                                                 </HoverCardContent>
@@ -269,7 +260,8 @@ const ReadingPracticeResult = async ({params,}:
                                                     </HStack>
                                                 })}
                                             </Box>
-                                            <ProgressCircleRoot size={"xl"} value={accuracy} colorPalette={accuracyScoreColor}>
+                                            <ProgressCircleRoot size={"xl"} value={accuracy}
+                                                                colorPalette={accuracyScoreColor}>
                                                 <ProgressCircleValueText>
                                                     <Heading color={accuracyScoreColor} fontSize={20}>
                                                         {accuracy}%
@@ -286,49 +278,31 @@ const ReadingPracticeResult = async ({params,}:
 
                         <Accordion.ItemContent>
                             <Accordion.ItemBody>
-                                <Tabs.Root variant="enclosed">
-                                    <Tabs.Content value="first">
-
-                                    </Tabs.Content>
-                                    <Tabs.Content value="second">
-
-                                    </Tabs.Content>
-                                    <Tabs.Content value="third">
-
-                                    </Tabs.Content>
-                                    <Tabs.List mt={2}>
-                                        <Tabs.Trigger value="first" color={'blue.400'} fontWeight={'bold'}>Passage 1</Tabs.Trigger>
-                                        <Tabs.Trigger value="second" color={'blue.400'} fontWeight={'bold'}>Passage 2</Tabs.Trigger>
-                                        <Tabs.Trigger value="third" color={'blue.400'} fontWeight={'bold'}>Passage 3</Tabs.Trigger>
-                                    </Tabs.List>
-                                </Tabs.Root>
+                                <Card.Root shadow={'md'} mt={'2%'}>
+                                    <Card.Body>
+                                        <Tabs.Root variant="enclosed" defaultValue={'first'}>
+                                            <Tabs.List mt={2}>
+                                                <Tabs.Trigger value="first" color={'blue.600'} fontWeight={'bold'}>Passage 1</Tabs.Trigger>
+                                                <Tabs.Trigger value="second" color={'blue.600'} fontWeight={'bold'}>Passage 2</Tabs.Trigger>
+                                                <Tabs.Trigger value="third" color={'blue.600'} fontWeight={'bold'}>Passage 3</Tabs.Trigger>
+                                            </Tabs.List>
+                                            <Tabs.Content value="first">
+                                                <PassageComponent results={data.results} answers={data.answer.answers} data={passageData.passages[0]} startIndex={0} />
+                                            </Tabs.Content>
+                                            <Tabs.Content value="second">
+                                                <PassageComponent results={data.results} answers={data.answer.answers} data={passageData.passages[1]} startIndex={data.answer.numberQuestions[0]} />
+                                            </Tabs.Content>
+                                            <Tabs.Content value="third">
+                                                <PassageComponent results={data.results} answers={data.answer.answers} data={passageData.passages[2]} startIndex={data.answer.numberQuestions[0] + data.answer.numberQuestions[1]} />
+                                            </Tabs.Content>
+                                        </Tabs.Root>
+                                    </Card.Body>
+                                </Card.Root>
                             </Accordion.ItemBody>
                         </Accordion.ItemContent>
-                </Accordion.Item>
+                    </Accordion.Item>
 
-            </Accordion.Root>
-
-                <SimpleGrid columns={{sm: 1, md: 3}} gap={'2.5%'} borderRadius={'md'} borderWidth={1} p={'1%'}>
-
-                    <Stack shadow={'md'} p={5} borderRadius={'md'} borderWidth={1}>
-                        <Heading>Passage 1</Heading>
-                        {renderPassageAnswers(0, passageQuestionNumber[0])}
-                    </Stack>
-                    <Stack shadow={'md'} p={5} borderRadius={'md'} borderWidth={1}>
-                        <Heading>Passage 2</Heading>
-                        {renderPassageAnswers(
-                            passageQuestionNumber[0],
-                            passageQuestionNumber[0] + passageQuestionNumber[1]
-                        )}
-                    </Stack>
-                    <Stack shadow={'md'} p={5} borderRadius={'md'} borderWidth={1}>
-                        <Heading>Passage 3</Heading>
-                        {renderPassageAnswers(
-                            passageQuestionNumber[0] + passageQuestionNumber[1],
-                            totalQuestions
-                        )}
-                    </Stack>
-                </SimpleGrid>
+                </Accordion.Root>
             </Box>
         );
     } catch (e) {
