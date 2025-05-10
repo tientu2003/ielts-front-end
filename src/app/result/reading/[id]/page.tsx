@@ -90,20 +90,6 @@ const ReadingPracticeResult = async ({params,}:
         const bandScoreColor = getScoreColor(data.score);
         const accuracyScoreColor = getScoreColor(accuracy * 9 / 100);
 
-        const renderPassageAnswers = (startIdx: number, endIdx: number) => {
-            return data.results.slice(startIdx, endIdx).map((answer: any, index: any) => {
-                const correctAnswer = data.answer.answers[startIdx + index];
-                const isCorrect = answer.check;
-
-                return (
-                    <Text key={index} color={isCorrect ? "green.500" : "red.500"} fontWeight={'semibold'}>
-                        Q{startIdx + index + 1}: {answer.userAnswer || "No Answer"}{" "}
-                        {!isCorrect && `→ Correct: ${correctAnswer}`}
-                    </Text>
-                );
-            });
-        };
-
         return (
             <Box pt={'1%'} pl={'5%'} pr={'5%'}>
 

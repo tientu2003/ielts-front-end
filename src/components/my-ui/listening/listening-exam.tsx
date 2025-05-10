@@ -23,7 +23,7 @@ export interface QuestionGroup {
     questions: Question[];
 }
 
-interface Question {
+export interface Question {
     questionNumber: string;
     questionText: string;
     answerOptions: string[];

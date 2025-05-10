@@ -3,11 +3,8 @@ import {Box, GridItem, Heading, Input, SimpleGrid, Text} from "@chakra-ui/react"
 import {InputGroup} from "@/components/ui/input-group";
 import {Passage} from "@/components/my-ui/reading/reading-exam";
 import {formatText} from "@/components/util/format-data";
+import { Result } from "@/components/util/result";
 
-interface Result {
-    "check": boolean;
-    "userAnswer": string;
-}
 
 const PassageComponent = ({
                               data,
@@ -61,7 +58,7 @@ const PassageComponent = ({
                                                        onInputChange(currentIndex, e.target.value)
                                                    }
                                                }}/>
-                                    </InputGroup> : <></>}
+                                    </InputGroup> : null}
                                     {results ? <Box>
                                         <InputGroup p={2} w={'80%'}
                                                     startElement={<Text>{count + startIndex}</Text>}>

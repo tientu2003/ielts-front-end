@@ -1,17 +1,19 @@
-import {Box, Center, GridItem, Input, SimpleGrid, Text, Card} from "@chakra-ui/react";
-import {InputGroup} from "@/components/ui/input-group";
+import {Box, Center, GridItem, SimpleGrid, Text, Card} from "@chakra-ui/react";
 import {QuestionGroup} from "./listening-exam";
 import {formatText} from "@/components/util/format-data";
+import {Result} from "@/components/util/result";
+import ListeningInputDisplay from "@/components/my-ui/common/ListeningInputDisplay";
 
 interface DefaultExamProps {
     questionGroup: QuestionGroup;
-    answers: string[];
-    onInputChange: (index: number, value: string) => void;
+    answers?: string[];
+    results?: Result[];
+    onInputChange?: (index: number, value: string) => void;
 }
 
-const DefaultExam = ({questionGroup, answers, onInputChange}: DefaultExamProps) => {
+const DefaultExam = ({questionGroup, answers, onInputChange, results}: DefaultExamProps) => {
 
-    return <Card.Root shadow={'md'} minH={'100%'} p={'2%'} mb={'2%'}>
+    return <Card.Root shadow={'md'} p={'2%'} mb={'2%'}>
         <SimpleGrid columns={6} m={5}>
             <GridItem colSpan={4}>
                 {questionGroup.context.map((row, i) => {
@@ -22,15 +24,7 @@ const DefaultExam = ({questionGroup, answers, onInputChange}: DefaultExamProps) 
                         {q.questionText === "null" || q.questionText === "" ? null :
                             <Box>
                                 <Text fontWeight={'semibold'} pl={5}>{q.questionNumber + ". " + q.questionText}</Text>
-                                <InputGroup w={'75%'} p={2} startElement={<Text>{q.questionNumber}</Text>}>
-                                    <Input
-                                        borderRadius={"10px"}
-                                        borderWidth={'2px'}
-                                        borderColor={answers[Number(q.questionNumber) - 1]?.trim().length > 0 ? "blue.500" : "gray.200"}
-                                        value={answers[Number(q.questionNumber) - 1]}
-                                        onChange={(e) => onInputChange(Number(q.questionNumber) - 1, e.target.value)}
-                                    />
-                                </InputGroup>
+                                <ListeningInputDisplay q={q} onInputChange={onInputChange} results={results} answers={answers} />
                             </Box>}
                     </Box>
                 })}
@@ -40,15 +34,7 @@ const DefaultExam = ({questionGroup, answers, onInputChange}: DefaultExamProps) 
                     return (<Box key={q.questionNumber}>
                         {q.questionText === "null" || q.questionText === "" ?
                             <Center>
-                                <InputGroup p={2} startElement={<Text>{q.questionNumber}</Text>}>
-                                    <Input
-                                        borderRadius={"10px"}
-                                        borderWidth={'2px'}
-                                        borderColor={answers[Number(q.questionNumber) - 1]?.trim().length > 0 ? "blue.500" : "gray.200"}
-                                        value={answers[Number(q.questionNumber) - 1]}
-                                        onChange={(e) => onInputChange(Number(q.questionNumber) - 1, e.target.value)}
-                                    />
-                                </InputGroup>
+                                <ListeningInputDisplay q={q} onInputChange={onInputChange} results={results} answers={answers} />
                             </Center> : null
                         }
                     </Box>)
