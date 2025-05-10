@@ -1,23 +1,29 @@
 'use client'
 import {Session} from "next-auth";
-import {Box, Button, Card, GridItem, SimpleGrid, Text, Textarea} from "@chakra-ui/react";
+import {Box, Card, GridItem, SimpleGrid, Text, Textarea} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import ContextPart from "@/components/my-ui/writing/context-part";
 import {useExamContext} from "@/components/my-ui/exam-context-provider";
+import {useRouter} from "next/navigation";
 
 interface WritingExamComponentProps {
-    session?: Session,
-    data: any,
+    session: Session,
+    data: WritingExam,
     id: string
 }
 
+interface WritingExam {
+    id: string,
+    name: string,
+    context: string,
+    diagram_url: string,
+    task: number,
+}
+
 const WritingExamComponent = ({session, data, id}: WritingExamComponentProps) => {
-    data = {
-        task:1,
-        context:"The graph below shows the consumption of renewable energy in the USA from 2000 to 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-        url: "/assets/sample-task1.png"
-    }
-    const [answer, setAnswer] = useState("");
+    const router = useRouter();
+    const [answer, setAnswer]= useState<string>('');
+    const [answers, setAnswers] = useState<string[]>([]);
     const [wordCount, setWordCount] = useState(0);
     const countWords = (value:string) => {
         // Trim the text and split by whitespace
@@ -27,6 +33,7 @@ const WritingExamComponent = ({session, data, id}: WritingExamComponentProps) =>
     const handleChange = (e:any) => {
         const value = e.target.value;
         setAnswer(value);
+        setAnswers(value.split('\n').filter((e:string) => e !== ''));
         setWordCount(countWords(value));
     };
 
@@ -37,48 +44,45 @@ const WritingExamComponent = ({session, data, id}: WritingExamComponentProps) =>
 
 
     const submitAnswers = async (timeTaken: number) => {
-        const cleanedAnswers = answer.trim().replace('\n', ' ')
 
         const payload = {
-            testId: id, // Replace with dynamic test ID if necessary
-            createdAt: new Date().toISOString(),
-            timeTaken: timeTaken.toString(),
-            answers: cleanedAnswers, // Use state `answers`
+            examId: id,
+            duration: timeTaken.toString(),
+            answer: answers,
         };
 
         try {
-            // const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/${session.decodedToken?.sub}/answer`, {
-            //     method: "POST",
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //         "Authorization": `Bearer ${session?.access_token}`, // Add access token here
-            //     },
-            //     body: JSON.stringify(payload),
-            // });
-            //
-            // if(response.status !== 201) {
-            //     throw new Error("Something went wrong");
-            // }
-            //
-            // const resId = await response.text();
-            console.log(payload);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_WRITING_SERVICE_URL}/api/writing/user/answer`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session?.access_token}`, // Add access token here
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if(response.status !== 200) {
+                throw new Error("Something went wrong");
+            }
+            const resId = await response.text()
+            router.push(`/result/writing/${resId}`);
         } catch (error) {
             console.error("Submission failed:", error);
         }
     }
-    return < SimpleGrid columns={2} bgColor="gray.100" height={'90vh'} gap={5}>
+    return <SimpleGrid columns={2} height={'90vh'} gap={5} >
         <GridItem colSpan={1}>
             <Box mt={"2.5vh"}
                  ml={10}
                  h="85vh">
-                <ContextPart task={data.task} context={data.context} url={data.url} />
+                <ContextPart task={data.task} context={data.context} url={data.diagram_url} name={data.name}/>
             </Box>
         </GridItem>
         <GridItem colSpan={1}>
             <Box mt={"2.5vh"}
                  mr={10}
                  h="85vh">
-                <Card.Root h={'100%'}>
+                <Card.Root h={'100%'} shadow={'lg'}>
                     <Card.Header>
                         <Text textAlign={'right'} mr={6}>
                             Words: {wordCount}
@@ -91,9 +95,6 @@ const WritingExamComponent = ({session, data, id}: WritingExamComponentProps) =>
                                   onChange={handleChange}
                         />
                     </Card.Body>
-                    <Card.Footer>
-                        <Button variant="subtle">Save Draft</Button>
-                    </Card.Footer>
                 </Card.Root>
             </Box>
         </GridItem>

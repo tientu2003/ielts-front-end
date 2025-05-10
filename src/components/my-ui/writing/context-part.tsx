@@ -1,16 +1,17 @@
-import {Card, Center, HStack, Text} from "@chakra-ui/react";
+import {Card, Center, Heading, HStack, Text} from "@chakra-ui/react";
 import Image from "next/image";
 import {IoInformationCircleSharp} from "react-icons/io5";
 
 interface IProps {
     task:number,
     context:string,
+    name:string,
     url:string,
 }
 
-const ContextPart = ({task, context, url}:IProps) =>{
+const ContextPart = ({task, context, url, name}:IProps) =>{
 
-    return <Card.Root h={'100%'}>
+    return <Card.Root h={'100%'} shadow={'lg'}>
         <Card.Header>
             <Card.Title fontSize="2xl">
                 Writing Task {task == 1? "1":"2"}
@@ -18,13 +19,15 @@ const ContextPart = ({task, context, url}:IProps) =>{
             <Text>
                 You should spend about {task == 1? "20" : "40"} minutes on this task.
             </Text>
+            <Text fontWeight={'semibold'}  fontSize="2xl" color={'green.600'}>{name}</Text>
+
             <Text>
                 {context}
             </Text>
         </Card.Header>
         <Card.Body>
             <Center>
-                <Image src={url} alt={"logo"} width={600} height={600}/>
+                {url && <Image src={url} alt={"logo"} width={600} height={600}/>}
             </Center>
         </Card.Body>
         <Card.Footer>

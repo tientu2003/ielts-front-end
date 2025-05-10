@@ -2,9 +2,9 @@ import type {Metadata} from "next";
 import {Provider} from "@/components/ui/provider"
 import React from "react";
 import {SessionWrapper} from "@/components/my-ui/session-wrapper";
-import '@fontsource/dancing-script'; // Import the Dancing Script font
+import '@fontsource/dancing-script';
 import '@fontsource/lexend';
-import {Toaster} from "@/components/ui/toaster"; // Import Lexend font
+import {Toaster} from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "English Practice",
@@ -22,6 +22,7 @@ export default function RootLayout({
                 <Provider>
                     <SessionWrapper>
                         {children}
+                        <Toaster/>
                     </SessionWrapper>
                     <Toaster/>
                 </Provider>
