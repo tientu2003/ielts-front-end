@@ -1,5 +1,7 @@
 'use client'
 
+import React from "react";
+
 const AudioPlayer = ({src}: { src: string }) => {
     const handlePlay = (e: React.SyntheticEvent<HTMLAudioElement>) => {
         const allAudios = document.getElementsByTagName('audio');

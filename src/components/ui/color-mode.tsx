@@ -1,7 +1,7 @@
 "use client"
 
 import type { IconButtonProps } from "@chakra-ui/react"
-import { ClientOnly, IconButton, Skeleton } from "@chakra-ui/react"
+import { IconButton, Skeleton } from "@chakra-ui/react"
 import { ThemeProvider, useTheme } from "next-themes"
 import type { ThemeProviderProps } from "next-themes"
 import * as React from "react"
@@ -43,18 +43,18 @@ export function useColorMode() {
   }
 }
 
-export function useColorModeValue<T>(light: T, dark: T) {
-  const { colorMode } = useColorMode()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return light
-
-  return colorMode === "light" ? light : dark
-}
+// export function useColorModeValue<T>(light: T, dark: T) {
+//   const { colorMode } = useColorMode()
+//   const [mounted, setMounted] = useState(false)
+//
+//   useEffect(() => {
+//     setMounted(true)
+//   }, [])
+//
+//   if (!mounted) return light
+//
+//   return colorMode === "light" ? light : dark
+// }
 
 export function ColorModeIcon() {
   const { colorMode } = useColorMode()

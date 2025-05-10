@@ -1,27 +1,14 @@
 'use client'
 import {Session} from "next-auth";
 import {
-    Box,
     Center,
-    Table,
-    GridItem,
-    Heading,
-    HStack,
-    Input,
-    SimpleGrid,
-    Tabs,
-    Text,
-    VStack,
-    Stack
+    Tabs
 } from "@chakra-ui/react";
-import {useRouter} from "next/navigation";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {useExamContext} from "@/components/my-ui/exam-context-provider";
-import AudioPlayer from "@/components/my-ui/listening/audio-player";
-import {InputGroup} from "@/components/ui/input-group";
-import {Radio, RadioGroup} from "@/components/ui/radio"
 import {reading_listening_inti_state} from "@/components/my-ui/common/common-function";
 import {toaster} from "@/components/ui/toaster";
+import {RecordingComponent} from "@/components/my-ui/listening/recording-component";
 
 export interface Recording {
     audioUrl: string;
@@ -29,7 +16,7 @@ export interface Recording {
     questionGroups: QuestionGroup[];
 }
 
-interface QuestionGroup {
+export interface QuestionGroup {
     questionType: string;
     context: string[];
     contextTable: [string[]];
@@ -43,120 +30,6 @@ interface Question {
     answer: string;
 }
 
-const RecordingComponent = ({
-                                data,
-                                session,
-                                answers,
-                                onInputChange
-                            }: {
-    data: Recording;
-    answers: string[];
-    session: number;
-    onInputChange: (index: number, value: string) => void;
-}) => {
-
-    return (
-        <SimpleGrid h={'80vh'} pl={'10%'} pr={'10%'}>
-            <Box>
-                <HStack mt={2}>
-                    <Heading w={'150px'}>
-                        Session {session}
-                    </Heading>
-                    <AudioPlayer src={data.audioUrl}/>
-                </HStack>
-            </Box>
-            <Box p={5} overflowY="auto" divideY={'2px'}>
-                {data.questionGroups.map((questionGroup, index) => {
-                    if (questionGroup.questionType === "table") {
-                        return (<SimpleGrid columns={6} key={index} m={5}>
-                            <GridItem colSpan={4}>
-                                <Heading mb={2} fontSize={'2xl'}>Complete the form below</Heading>
-                                <Table.Root showColumnBorder={true} border={'2px solid'} borderColor={'gray.200'}>
-                                    <Table.Body>
-                                        {questionGroup.contextTable.map((row: string[], i) => {
-                                            return (<Table.Row key={i}>
-                                                {row.map((word, j) => <Table.Cell key={j}
-                                                                                  fontSize={'xl'}>{word}</Table.Cell>)}
-                                            </Table.Row>)
-                                        })}
-                                    </Table.Body>
-                                </Table.Root>
-                            </GridItem>
-                            <GridItem colSpan={2} mt={10}>
-                                <VStack>
-                                    {questionGroup.questions.map(q => {
-                                        return (<Box key={q.questionNumber}>
-                                            <InputGroup p={2} startElement={<Text>{q.questionNumber}</Text>}>
-                                                <Input
-                                                    borderRadius={"10px"}
-                                                    borderWidth={'2px'}
-                                                    borderColor={answers[Number(q.questionNumber) - 1]?.trim().length > 0 ? "blue.500" : "gray.200"}
-                                                    value={answers[Number(q.questionNumber) - 1]}
-                                                    onChange={(e) => onInputChange(Number(q.questionNumber) - 1, e.target.value)}
-                                                />
-                                            </InputGroup>
-                                        </Box>)
-                                    })}
-                                </VStack>
-                            </GridItem>
-                        </SimpleGrid>)
-                    } else if (questionGroup.questionType === "choice") {
-                        return (
-                            <Box key={index} m={5}>
-                                {questionGroup.context.map((row, i) => <Heading key={i}>{row}</Heading>)}
-                                {questionGroup.questions.map((q) => {
-                                    return (<Box key={q.questionNumber} mt={5}>
-                                        {q.questionText === "null" || q.questionText === "" ? null :
-                                            <Heading pl={5}>{q.questionNumber + ". " + q.questionText}</Heading>}
-                                        <RadioGroup  key={q.questionNumber} value={answers[Number(q.questionNumber) - 1]}
-                                                    onValueChange={(e) => onInputChange(Number(q.questionNumber) - 1, e.value)}>
-                                            <Stack gap={2} pl={10} mt={4}>
-                                                {q.answerOptions.map((op,i) => {
-                                                    return (
-                                                        <Radio key={q.questionNumber + i} value={op.charAt(0)} colorPalette={'blue'} >
-                                                            {op}
-                                                        </Radio>
-                                                    )
-                                                })}
-                                            </Stack>
-                                        </RadioGroup>
-                                    </Box>)
-                                })}
-                            </Box>)
-                    } else {
-                        return (
-                            <SimpleGrid columns={6} key={index} m={5}>
-                                <GridItem colSpan={3}>
-                                    {questionGroup.context.map((row, i) => <Heading key={i}>{row}</Heading>)}
-                                </GridItem>
-                                <GridItem colSpan={3}>
-                                        {questionGroup.questions.map(q => {
-                                            return (<Box key={q.questionNumber}>
-                                                {q.questionText === "null" || q.questionText === "" ? null :
-                                                    <Text fontWeight={'semibold'} pl={5}>{q.questionNumber + ". " + q.questionText}</Text>}
-                                                <Center>
-                                                    <InputGroup p={2} startElement={<Text>{q.questionNumber}</Text>}>
-                                                        <Input
-                                                            borderRadius={"10px"}
-                                                            borderWidth={'2px'}
-                                                            borderColor={answers[Number(q.questionNumber) - 1]?.trim().length > 0 ? "blue.500" : "gray.200"}
-                                                            value={answers[Number(q.questionNumber) - 1]}
-                                                            onChange={(e) => onInputChange(Number(q.questionNumber) - 1, e.target.value)}
-                                                        />
-                                                    </InputGroup>
-                                                </Center>
-
-                                            </Box>)
-                                        })}
-                                </GridItem>
-                            </SimpleGrid>)
-                    }
-                })}
-            </Box>
-        </SimpleGrid>
-    )
-}
-
 interface ListeningExamProps {
     session: Session,
     data: Recording[],
@@ -166,8 +39,6 @@ interface ListeningExamProps {
 const ListeningExamComponent = ({session, data, id}: ListeningExamProps) => {
 
     const {router, value, setValue, answers, handleInputChange} = reading_listening_inti_state();
-
-
 
     useEffect( () =>{setSubmitFunction(submitAnswers)},[answers])
 

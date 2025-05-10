@@ -1,7 +1,8 @@
 'use client'
-import {Box, Flex, GridItem, Heading, HStack, Input, SimpleGrid, Text} from "@chakra-ui/react";
+import {Box, GridItem, Heading, Input, SimpleGrid, Text} from "@chakra-ui/react";
 import {InputGroup} from "@/components/ui/input-group";
 import {Passage} from "@/components/my-ui/reading/reading-exam";
+import {formatText} from "@/components/util/format-data";
 
 interface Result {
     "check": boolean;
@@ -23,16 +24,6 @@ const PassageComponent = ({
 }) => {
 
     let count = 0;
-
-    const formatText = (text: string) => {
-        const keywords = ['NO', 'MORE', 'THAN', 'TWO', 'WORDS', 'ONE', 'WORD', 'ONLY', 'THREE', 'TRUE', 'FALSE', 'NOT GIVEN'];
-        let formattedText = text;
-        formattedText = keywords.reduce((acc, keyword) => {
-            const regex = new RegExp(`\\b${keyword}\\b`, 'g');
-            return acc.replace(regex, `<span style="font-weight: bold; color: red;">${keyword}</span>`);
-        }, formattedText);
-        return formattedText.replace(/\b[A-Z](?![A-Z])\b/g, match => `<span style="font-weight: bold; color: red;">${match}</span>`);
-    };
 
     return (
         <SimpleGrid columns={2} h={'80vh'} divideX={'2px'} border={'2px solid'} borderColor={'gray.200'}>

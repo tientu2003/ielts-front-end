@@ -48,10 +48,15 @@ const ListeningPracticeResult =  async ({params,}:
             }
         });
 
+
         if(response.status === 401){
             return <AbsoluteCenter>
                 Login is expired, please login again.
                 <HandleUnauthorized />
+            </AbsoluteCenter>
+        }else if (response.status === 404){
+            return <AbsoluteCenter>
+                Reading-Service is not available, please try again later. Contact administrator if the problem persists.
             </AbsoluteCenter>
         }
 
@@ -218,7 +223,7 @@ const ListeningPracticeResult =  async ({params,}:
                 </SimpleGrid>
                 {data?.answer?.numberQuestions.map(
                     (d:any, index:number) =>
-                        <RecordingDetailResult sessionNumber={index + 1}
+                        <RecordingDetailResult key={index} sessionNumber={index + 1}
                                                audioUrl={listeningExam.recording[index].audioUrl}
                                                transcripts={listeningExam.recording[index].transcript}
                                                data={data} />
