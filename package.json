@@ -9,20 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/charts": "^3.17.0",
     "@chakra-ui/react": "^3.2.3",
     "@emotion/react": "^11.14.0",
     "@fontsource/dancing-script": "^5.1.0",
     "@fontsource/lexend": "^5.1.1",
-    "apexcharts": "^4.3.0",
     "jsonwebtoken": "^9.0.2",
     "next": "15.2.4",
     "next-auth": "^4.24.11",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",
-    "react-apexcharts": "^1.7.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.1",
-    "react-icons": "^5.4.0"
+    "react-icons": "^5.4.0",
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@chakra-ui/cli": "^3.2.3",

@@ -1,43 +1,38 @@
 import {
-    AbsoluteCenter,
-    Box, Button, Card,
-    Center,
-    Container,
-    Heading,
-    HStack,
     SimpleGrid,
-    Stack,
     Table,
-    Text
+    Stack,
+    Heading,
+    Text,
+    Box,
+    Container,
+    Center,
+    HStack,
+    AbsoluteCenter
 } from "@chakra-ui/react";
-import {ListeningSummaryType} from "@/app/progress/page";
-import {Session} from "next-auth";
+import {ReadingOverallType} from "@/app/progress/page";
+import ReadingTableRow from "@/components/my-ui/progress/reading/reading-table-row";
 import React from "react";
-import ListeningTableRow from "@/components/my-ui/progress/listening-table-row";
-import ListeningApexChart from "@/components/my-ui/progress/listening-chart";
-import Link from "next/link";
+import {Session} from "next-auth";
 
-interface ListeningStatisticProps {
-    data: ListeningSummaryType,
-    session: Session
-}
-function convertToIELTSBand(score: number) {
-    // Round to the nearest 0.5
-    return Math.round(score * 2) / 2;
-}
-
-export interface ListeningListType   {
+export interface ReadingListType {
     id: string,
-    name: string,
+    recordId: string,
+    createdAt: string,
+    testName: string,
     score: number,
-    date:  string
+    data?: ReadingListType
 }
-// '2025-01-02T10:29:05.803Z'
 
-const ListeningStatistic = async ({data, session}: ListeningStatisticProps) => {
+interface ReadingStatisticProps {
+    data: ReadingOverallType,
+    session: Session,
+}
+
+const ReadingStatistic = async ({data,session}: ReadingStatisticProps) => {
 
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/${session.decodedToken?.sub}/answer`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/answer`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
@@ -45,12 +40,13 @@ const ListeningStatistic = async ({data, session}: ListeningStatisticProps) => {
             }
         });
 
-        const listeningList:ListeningListType[] = await response.json();
+        const readingList: ReadingListType[] = await response.json();
+
 
         return (
             <SimpleGrid columns={{sm: 1, md: 2}} gap={5} pr={5}>
                 <Stack width="full" gap="5">
-                    <Heading size="xl">Listening Practice History</Heading>
+                    <Heading size="xl">Reading Practice History</Heading>
                     <Table.ScrollArea borderWidth="1px" rounded="md" height="xl">
                         <Table.Root size="sm" variant="outline" interactive stickyHeader>
                             <Table.Header>
@@ -61,9 +57,9 @@ const ListeningStatistic = async ({data, session}: ListeningStatisticProps) => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {listeningList.map((item) =>
-                                    <ListeningTableRow data={item}  />
-                                )}
+                                {readingList.map((item,index) => (
+                                    <ReadingTableRow key={index} data={item}/>
+                                ))}
                             </Table.Body>
                         </Table.Root>
                     </Table.ScrollArea>
@@ -78,7 +74,7 @@ const ListeningStatistic = async ({data, session}: ListeningStatisticProps) => {
                                 <Box borderRadius={100} w={100} h={100} borderWidth={10} borderColor={'green.400'}>
                                     <Center h={20}>
                                         <Text color={'green.400'} fontWeight={'bold'} fontSize={'4xl'}>
-                                            {listeningList.length}
+                                            {readingList.length}
                                         </Text>
                                     </Center>
                                 </Box>
@@ -105,26 +101,8 @@ const ListeningStatistic = async ({data, session}: ListeningStatisticProps) => {
                                 <Heading>Total Time</Heading>
                             </Container>
                         </HStack>
-                        <ListeningApexChart data={listeningList}/>
                     </Box>
 
-                </Stack>
-                <Stack>
-                    <Card.Root >
-                        <Card.Header>
-                            <Heading>Next Practice</Heading>
-                        </Card.Header>
-                        <Card.Body>
-                            <HStack>
-                                <Heading>{data.testName}</Heading>
-                                <Link href={`/exam/listening/${data.nextTestId}`}>
-                                    <Button variant={'ghost'} color={'blue.500'} fontWeight={'bold'} fontSize={'xl'}>
-                                        Start
-                                    </Button>
-                                </Link>
-                            </HStack>
-                        </Card.Body>
-                    </Card.Root>
                 </Stack>
             </SimpleGrid>
         )
@@ -134,6 +112,12 @@ const ListeningStatistic = async ({data, session}: ListeningStatisticProps) => {
             Internal Error
         </AbsoluteCenter>
     }
+
 }
 
-export default ListeningStatistic;
+function convertToIELTSBand(score: number) {
+    // Round to the nearest 0.5
+    return Math.round(score * 2) / 2;
+}
+
+export default ReadingStatistic;

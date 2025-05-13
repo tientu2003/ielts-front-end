@@ -1,7 +1,7 @@
 'use client'
 import {Table} from "@chakra-ui/react";
 import {useRouter} from "next/navigation";
-import {ListeningListType} from "@/components/my-ui/progress/listening-statistic";
+import {ListeningListType} from "@/components/my-ui/progress/listening/listening-statistic";
 
 interface ListeningTableRowProps {
     data: ListeningListType

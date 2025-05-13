@@ -1,4 +1,4 @@
-import {Card, Center, Heading, HStack, Text} from "@chakra-ui/react";
+import {Card, Center, HStack, Text} from "@chakra-ui/react";
 import Image from "next/image";
 import {IoInformationCircleSharp} from "react-icons/io5";
 

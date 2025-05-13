@@ -60,10 +60,6 @@ const WritingExamComponent = ({session, data, id}: WritingExamComponentProps) =>
                 },
                 body: JSON.stringify(payload),
             });
-
-            if(response.status !== 200) {
-                throw new Error("Something went wrong");
-            }
             const resId = await response.text()
             router.push(`/result/writing/${resId}`);
         } catch (error) {

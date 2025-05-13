@@ -1,5 +1,5 @@
 'use client'
-import {ReadingListType} from "@/components/my-ui/progress/reading-statistic";
+import {ReadingListType} from "@/components/my-ui/progress/reading/reading-statistic";
 import {Table} from "@chakra-ui/react";
 import {useRouter} from "next/navigation";
 

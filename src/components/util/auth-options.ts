@@ -45,10 +45,6 @@ export const authOptions = {
 
                             const tokens = await response.json();
 
-                            if (!response.ok) {
-                                throw new Error('Failed to refresh token');
-                            }
-
                             // Update token with new values
                             token.access_token = tokens.access_token;
                             token.refresh_token = tokens.refresh_token;
