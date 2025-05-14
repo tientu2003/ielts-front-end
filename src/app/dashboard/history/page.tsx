@@ -1,13 +1,7 @@
 import {
     AbsoluteCenter,
     Box,
-    Heading,
-    Input,
-    Select,
-    SimpleGrid,
-    Stack,
-    Text,
-    VStack
+    Heading
 } from "@chakra-ui/react";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/components/util/auth-options";
@@ -37,8 +31,9 @@ const HistoryPage = async () => {
         </Box>)
     }
 
+    let listResponse, readResponse, writingResponse;
     try {
-        const [listResponse, readResponse, writingResponse] = await Promise.all([
+        [listResponse, readResponse, writingResponse] = await Promise.all([
             fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/answer`, {
                 method: 'GET',
                 headers: {
@@ -60,7 +55,7 @@ const HistoryPage = async () => {
                     'Authorization': `Bearer ${session.access_token}`,
                 }
             })
-        ]);
+        ]) as [Response, Response, Response];
 
         const [listData, readData, writingData] = await Promise.all([
             listResponse.json(),
@@ -77,8 +72,13 @@ const HistoryPage = async () => {
         return <HistoryComponent data={data} />
     } catch (e) {
         return (<AbsoluteCenter>
-            <HandleUnauthorized />
-            Internal Error
+            {listResponse?.status === 401 || readResponse?.status === 401 || writingResponse?.status === 401 ? (
+                <HandleUnauthorized/>
+            ) : (
+                <>
+                    Internal Error
+                </>
+            )}
         </AbsoluteCenter>)
     }
 }

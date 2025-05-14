@@ -1,20 +1,36 @@
 'use client'
 import {HistoryData} from "@/app/dashboard/history/page";
 import React, {useState} from "react";
-import {Box, Input, Portal, Select, SimpleGrid, Field, Text, VStack, createListCollection} from "@chakra-ui/react";
+import {
+    Box,
+    Input,
+    Portal,
+    Select,
+    SimpleGrid,
+    Field,
+    Text,
+    VStack,
+    createListCollection,
+    Pagination,
+    ButtonGroup,
+    IconButton,
+    Center,
+} from "@chakra-ui/react";
 import HistoryRecord from "@/components/my-ui/progress/HistoryRecord";
+import {HiChevronLeft, HiChevronRight} from "react-icons/hi2";
 
 interface HistoryRecordProps {
     data: HistoryData[];
 }
 
 const HistoryComponent = ({data}: HistoryRecordProps) => {
-
+    const pageSize = 10;
     const [searchName, setSearchName] = useState("");
     const [searchScore, setSearchScore] = useState<string[]>(["10"]);
-    const [searchType, setSearchType] = useState<string[]>([]);
+    const [searchType, setSearchType] = useState<string[]>(['all']);
     const [searchTopic, setSearchTopic] = useState("");
     const [sortOrder, setSortOrder] = useState<string[]>(["desc"]);
+    const [page, setPage] = useState(1)
 
 
     const filteredData = data.filter(item => {
@@ -26,11 +42,22 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
         );
         return nameMatch && scoreMatch && typeMatch && topicMatch;
     }).sort((a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
+        const dateA = parseCustomDate(a.date).getTime();
+        const dateB = parseCustomDate(b.date).getTime();
         return sortOrder.includes("desc") ? dateB - dateA : dateA - dateB;
     });
-    return <Box shadow={'md'} p={'2%'}>
+
+    // Calculate pagination values
+    const totalItems = filteredData.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    // Get current page data
+    const paginatedData = filteredData.slice(
+        (page - 1) * pageSize,
+        page * pageSize
+    );
+
+    return <Box shadow={'md'} p={'2%'} mb={'2%'}>
         <SimpleGrid columns={5} gap={'2.5%'}>
             <Field.Root>
                 <Field.Label>Name</Field.Label>
@@ -42,7 +69,8 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
             </Field.Root>
             <Select.Root collection={typeOptions}
                          value={searchType}
-                         onValueChange={(target) => {setSearchType(target.value);
+                         onValueChange={(target) => {
+                             setSearchType(target.value);
                          }}>
                 <Select.HiddenSelect/>
                 <Select.Label>Search Skill</Select.Label>
@@ -69,7 +97,8 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
             </Select.Root>
             <Select.Root collection={scoreOptions}
                          value={searchScore}
-                         onValueChange={(target) => {setSearchScore(target.value);
+                         onValueChange={(target) => {
+                             setSearchScore(target.value);
                          }}>
                 <Select.HiddenSelect/>
                 <Select.Label>Search Score</Select.Label>
@@ -104,7 +133,8 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
             </Field.Root>
             <Select.Root collection={orderOptions}
                          value={sortOrder}
-                         onValueChange={(target) => {setSortOrder(target.value);
+                         onValueChange={(target) => {
+                             setSortOrder(target.value);
                          }}>
                 <Select.HiddenSelect/>
                 <Select.Label>Order By</Select.Label>
@@ -130,16 +160,54 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
                 </Portal>
             </Select.Root>
         </SimpleGrid>
-
-        <VStack>
+        <VStack mt={5}>
             {filteredData.length > 0 ? (
-                filteredData.map(record => (
+                paginatedData.map(record => (
                     <HistoryRecord key={record.id} {...record} />
                 ))
             ) : (
                 <Text>No records found</Text>
             )}
+
         </VStack>
+        <Center mt={5}>
+            {filteredData.length > 0 && (
+                <Pagination.Root
+                    count={totalItems}
+                    pageSize={pageSize}
+                    page={page}
+                    onPageChange={(e) => setPage(e.page)}
+                >
+                    <ButtonGroup variant="ghost" size="sm">
+                        <Pagination.PrevTrigger asChild>
+                            <IconButton aria-label="Previous page">
+                                <HiChevronLeft/>
+                            </IconButton>
+                        </Pagination.PrevTrigger>
+
+                        <Pagination.Items
+                            render={(page: { type: "page"; value: number; isSelected?: boolean }) => (
+                                <IconButton
+                                    key={page.value}
+                                    aria-label={`Page ${page.value}`}
+                                    variant={page.isSelected ? "outline" : "ghost"}
+                                >
+                                    {page.value}
+                                </IconButton>
+                            )}
+                        />
+
+                        <Pagination.NextTrigger asChild>
+                            <IconButton aria-label="Next page">
+                                <HiChevronRight/>
+                            </IconButton>
+                        </Pagination.NextTrigger>
+                    </ButtonGroup>
+                </Pagination.Root>
+            )}
+        </Center>
+
+
     </Box>
 }
 
@@ -175,5 +243,20 @@ const orderOptions = createListCollection({
         {label: "Descending", value: "desc"},
     ],
 })
+
+function parseCustomDate(dateStr: string): Date {
+    const [datePart, timePart] = dateStr.split(' ');
+    const [day, month, year] = datePart.split('/');
+    const [hours, minutes] = timePart.split(':');
+
+    return new Date(
+        parseInt(year),
+        parseInt(month) - 1, // Months are 0-based in JavaScript
+        parseInt(day),
+        parseInt(hours),
+        parseInt(minutes)
+    );
+}
+
 
 export default HistoryComponent;

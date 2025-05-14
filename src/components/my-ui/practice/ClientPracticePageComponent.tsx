@@ -96,7 +96,7 @@ function ClientPracticePageComponent({initialData}: { initialData: BasicExamData
                 </Box>
             </GridItem>
             <GridItem colSpan={4}>
-                <PracticeTestList practiceData={displayData}/>
+            <PracticeTestList practiceData={displayData}/>
             </GridItem>
         </SimpleGrid>
         {displayData.length !== 0 && <Center>
