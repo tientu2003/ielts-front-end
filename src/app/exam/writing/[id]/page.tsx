@@ -1,11 +1,12 @@
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/components/util/auth-options"; // Import jsonwebtoken to decode the JWT
 import {AbsoluteCenter, Box, Heading} from "@chakra-ui/react";
-import ListeningExamComponent from "@/components/my-ui/listening/listening-exam";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/components/util/auth-options";
+import WritingExamComponent from "@/components/my-ui/writing/writing-exam";
 import HandleUnauthorized from "@/components/util/HandleUnauthorized";
 
-const ListeningExamPage = async ({params,}:
-                               { params: Promise<{ id: string }>})  =>{
+
+const WritingExamPage = async ({params,}:
+                               { params: Promise<{ id: string }>}) =>{
     const id = (await params).id
 
     const session = await getServerSession(authOptions)
@@ -20,13 +21,14 @@ const ListeningExamPage = async ({params,}:
     }
 
     try{
-        const response = await fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/data/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_WRITING_SERVICE_URL}/api/writing/data/${id}`, {
             method: 'GET',  // Change to 'POST', 'PUT', or other methods as needed
             headers: {
                 'Content-Type': 'application/json',  // Ensure the server knows you're sending JSON
                 'Authorization': `Bearer ${session.access_token}`,  // Add Bearer token to the request headers
             }
         });
+
         if(response.status === 401){
             return <AbsoluteCenter>
                 Login is expired, please login again.
@@ -34,7 +36,7 @@ const ListeningExamPage = async ({params,}:
             </AbsoluteCenter>
         }
         const data = await response.json();
-        return <ListeningExamComponent session={session} data={data?.recording as any} id={id}/>
+        return <WritingExamComponent session={session} data={data as any} id={id}/>
 
     }catch (error){
         console.log(error)
@@ -48,4 +50,4 @@ const ListeningExamPage = async ({params,}:
     }
 }
 
-export default ListeningExamPage;
+export default WritingExamPage;

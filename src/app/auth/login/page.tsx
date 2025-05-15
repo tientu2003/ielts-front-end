@@ -1,5 +1,5 @@
 'use client'
-import {AbsoluteCenter, Box, Button, Heading, Stack, Text} from "@chakra-ui/react"
+import {AbsoluteCenter, Box, Button, Heading, Stack} from "@chakra-ui/react"
 import TopNav from "@/components/my-ui/top-nav";
 import '@fontsource/dancing-script'; // Import the Dancing Script font
 import '@fontsource/lexend';

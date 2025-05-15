@@ -6,7 +6,7 @@ import React from "react";
 import AccountLogin from "@/components/my-ui/top-nav/account-login";
 
 const TopNav = () => (
-    <SimpleGrid columns={2} padding={5}>
+    <SimpleGrid columns={2} padding={5} shadow="sm">
         <Heading fontFamily="'Dancing Script', cursive" fontSize="4xl">
             <Link href={'/'}>
                 <Highlight query={'English Master'} styles={{color: "teal.500"}}>
@@ -16,17 +16,17 @@ const TopNav = () => (
         </Heading>
         <Flex gap="10" justify="flex-end">
             <Link href={'/'}>
-                <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'} width={100}>
+                <Button fontWeight={"medium"} fontSize={'xl'} variant={'ghost'} width={100}>
                         Home
                 </Button>
             </Link>
             <Link href={'/practice'}>
-                <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={100}>Practice</Button>
+                <Button fontWeight={"medium"} fontSize={'xl'} variant={'ghost'}  width={100}>Practice</Button>
             </Link>
-            <Link href={'/progress'}>
-                <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>My Progress</Button>
+            <Link href={'/dashboard/history'}>
+                <Button fontWeight={"medium"} fontSize={'xl'} variant={'ghost'}  width={150}>Progress</Button>
             </Link>
-            <Button fontWeight={"400"} fontSize={'xl'} variant={'ghost'}  width={150}>Resources</Button>
+            <Button fontWeight={"medium"} fontSize={'xl'} variant={'ghost'}  width={150}>Resources</Button>
             <ColorModeButton/>
             <AccountLogin />
         </Flex>

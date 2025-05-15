@@ -5,6 +5,18 @@ const nextConfig: NextConfig = {
   experimental:{
     optimizePackageImports: ["@chakra-ui/react"],
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 's4-media1.study4.com',
+        port: '',
+        pathname: '/**',
+        search: '',
+      },
+    ],
+  },
+
 };
 
 export default nextConfig;

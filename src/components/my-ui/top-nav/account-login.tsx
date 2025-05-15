@@ -49,7 +49,7 @@ const AccountLogin = () => {
                 </Flex>
             </MenuTrigger>
             <MenuContent position={'absolute'} mt={10}>
-                <MenuItem onClick={() => router.push('/progress')} value="history">
+                <MenuItem onClick={() => router.push('/dashboard/account')} value="history">
                     Account
                 </MenuItem>
                 <MenuItem onClick={() => handleLogout()} value="sign-out">

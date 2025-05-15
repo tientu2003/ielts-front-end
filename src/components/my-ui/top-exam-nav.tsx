@@ -14,7 +14,7 @@ interface TopExamNavProps {
 const TopExamNav = (props: TopExamNavProps) => {
     let time = 0;
     if (props.type === "listening") {
-        time = 45;
+        time = 30;
     } else if (props.type === "reading") {
         time = 60;
     } else if (props.type === "writing") {

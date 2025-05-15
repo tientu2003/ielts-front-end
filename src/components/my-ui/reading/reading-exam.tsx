@@ -1,20 +1,18 @@
 'use client'
 
-import {Box, Center, Text, GridItem, Heading, SimpleGrid, Tabs, Input} from "@chakra-ui/react";
-import {useEffect, useState} from "react";
-import { InputGroup } from "@/components/ui/input-group"
+import {Center, Tabs} from "@chakra-ui/react";
+import {useEffect} from "react";
 import {useExamContext} from "@/components/my-ui/exam-context-provider";
 import {useSession} from "next-auth/react";
 import {useParams} from "next/navigation";
-import { useRouter } from 'next/navigation'; // Import useRouter at the top
+import {reading_listening_inti_state} from "@/components/my-ui/common/common-function";
+import {toaster} from "@/components/ui/toaster";
+import PassageComponent from "@/components/my-ui/reading/PassageComponent";
 
-
-
-interface Passage{
+export interface Passage{
     articleName: string;
     paragraphs: Array<paragraph>;
     questionGroups: Array<QuestionGroup>;
-    numberOfQuestions: number;
 }
 
 interface paragraph{
@@ -29,71 +27,6 @@ interface QuestionGroup{
     questions: Array<string>;
 }
 
-const PassageComponent = ({
-      data,
-      startIndex,
-      answers,
-      onInputChange}: {
-    data: Passage;
-    startIndex: number;
-    answers: string[];
-    onInputChange: (index: number, value: string) => void;
-}) => {
-
-    let count = 0;
-
-    const formatText = (text:string) => {
-        // Replace all capitalized words with a styled <span>
-        return text.replace(/\b[A-Z]+\b/g, (match) => `<span style="font-weight: bold; color: red;">${match}</span>`);
-    };
-
-    return (
-        <SimpleGrid columns={2} h={'800px'} divideX={'2px'} border={'2px solid'}  borderColor={'gray.200'}>
-            <Box p={5} overflowY="auto">
-                <GridItem>
-                    <Heading>
-                        {data.articleName === null || data.articleName === "null" ? null: data.articleName}
-                    </Heading>
-                    {data.paragraphs.map((p, i) =>{
-                        return (<Box key={i}>
-                            {p.title === null || p.title === "null" ? null : <Text fontWeight={'bold'}>{p.title}</Text> }
-                            {p.paragraph === null || p.paragraph === "null" ? null :  <Text>{p.paragraph}</Text> }
-                            </Box>)
-                    })}
-                </GridItem>
-            </Box>
-            <Box p={5} overflowY="auto">
-                <GridItem>
-                    {data.questionGroups.map((qG, i) =>{
-                        return (<Box key={i}>
-                            {qG.context.map((c, j) => {
-                                return  <Text key={j} dangerouslySetInnerHTML={{ __html: formatText(c) }} />
-                            })}
-                            {qG.questions.map((q, j) =>{
-                                const currentIndex = count + startIndex; // Tính chỉ số trong mảng `answers`
-                                count++;
-                                return <Box key={j}>
-                                    {q === "null" ? null: <Text>{(count + startIndex) + ". " +q}</Text>}
-                                    <InputGroup p={2} startElement={<Text>{count + startIndex}</Text>}>
-                                        <Input
-                                            borderRadius={"10px"}
-                                            borderWidth={'2px'}
-                                            borderColor={answers[currentIndex]?.trim().length > 0 ? "blue.500" : "gray.200"}
-                                            value={answers[currentIndex]} // Hiển thị giá trị từ `answers`
-                                            onChange={(e) => onInputChange(currentIndex, e.target.value)}// Cập nhật giá trị
-                                        />
-                                    </InputGroup>
-                                </Box>
-                            })}
-                        </Box>)
-                    })}
-
-                </GridItem>
-            </Box>
-        </SimpleGrid>
-    )
-}
-
 interface ReadingExamComponentProps {
     data: Array<Passage>
 }
@@ -101,19 +34,17 @@ interface ReadingExamComponentProps {
 const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
     const  {data:session} = useSession();
     const {id} = useParams();
-    const router = useRouter(); // Initialize the router hook
+    const {router, value, setValue, answers, handleInputChange} = reading_listening_inti_state();
 
-    const [value, setValue] = useState<string | null>("first")
-
-    const [answers, setAnswers] = useState<string[]>(Array(40).fill(""));
-
-    const handleInputChange = (index: number, value: string) => {
-        setAnswers((prev) => {
-            const updatedAnswers = [...prev];
-            updatedAnswers[index] = value; // Cập nhật giá trị tại vị trí `index`
-            return updatedAnswers;
-        });
+    const getTotalQuestions = (passage: Passage): number => {
+        return passage.questionGroups.reduce((total, group) => total + group.questions.length, 0);
     };
+
+    const startIndexes = data.reduce((acc: number[], passage, index) => {
+        if (index === 0) return [0];
+        return [...acc, acc[index - 1] + getTotalQuestions(data[index - 1])];
+    }, []);
+
 
     const { setSubmitFunction } = useExamContext();
     useEffect( () =>{setSubmitFunction(submitAnswers)},[answers])
@@ -131,7 +62,7 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
         };
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/${session?.decodedToken?.sub}/answer`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_READING_SERVICE_URL}/api/reading/user/answer`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -141,7 +72,10 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
             });
 
             if(response.status !== 201) {
-                throw new Error("Something went wrong");
+                toaster.create({
+                    description: "Something went wrong",
+                    type: "error",
+                });
             }
 
             const resId:string = await response.text();
@@ -161,14 +95,14 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
             </Tabs.Content>
             <Tabs.Content value="second">
                 <PassageComponent data={data[1]}
-                                  startIndex={data[0].numberOfQuestions }
+                                  startIndex={startIndexes[1]}
                                   answers={answers}
                                   onInputChange={handleInputChange}
                 />
             </Tabs.Content>
             <Tabs.Content value="third">
                 <PassageComponent data={data[2]}
-                                  startIndex={data[1].numberOfQuestions + data[0].numberOfQuestions}
+                                  startIndex={startIndexes[2]}
                                   answers={answers}
                                   onInputChange={handleInputChange}
                 />
