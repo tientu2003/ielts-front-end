@@ -59,7 +59,7 @@ interface ExamCardConfig {
 }
 
 
-function PracticeExamCard({id, testName, type, topics, levels, task}: BasicExamData) {
+export function PracticeExamCard({id, testName, type, topics, levels, task}: BasicExamData) {
     const [mousePosition, setMousePosition] = useState({x: 0, y: 0});
     const [isHovered, setIsHovered] = useState(false);
     const {colorMode} = useColorMode();
@@ -140,8 +140,10 @@ function PracticeExamCard({id, testName, type, topics, levels, task}: BasicExamD
             <Card.Header>
                 <Flex justify={'space-between'} direction={'row'}>
                     <Box
-                        px={2}
-                        py={0.5}
+                        pl={2}
+                        pr={2}
+                        pt={0.5}
+                        pb={0.5}
                         borderRadius={'10px'}
                         color={config.color}
                         bg={config.bgColor}

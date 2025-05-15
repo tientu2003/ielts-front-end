@@ -1,7 +1,7 @@
 import {InputGroup} from "@/components/ui/input-group";
 import {Box, Input, Text} from "@chakra-ui/react";
 import {Question} from "@/components/my-ui/listening/listening-exam";
-import {Result} from "@/components/util/result";
+import {Result} from "@/components/util/type-def";
 
 interface ListeningInputDisplayProps {
     q: Question,

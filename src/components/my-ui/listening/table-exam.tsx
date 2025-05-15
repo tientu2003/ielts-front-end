@@ -1,6 +1,6 @@
 import {Box, GridItem, Heading, SimpleGrid, Table, VStack, Card} from "@chakra-ui/react";
 import {QuestionGroup} from "@/components/my-ui/listening/listening-exam";
-import {Result} from "@/components/util/result";
+import {Result} from "@/components/util/type-def";
 import ListeningInputDisplay from "@/components/my-ui/common/ListeningInputDisplay";
 
 interface TableExamProps {

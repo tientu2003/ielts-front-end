@@ -1,7 +1,7 @@
 import {Box, Heading, Stack, Card, Text} from "@chakra-ui/react";
 import {Radio, RadioGroup} from "@/components/ui/radio";
 import {QuestionGroup} from "@/components/my-ui/listening/listening-exam";
-import {Result} from "@/components/util/result";
+import {Result} from "@/components/util/type-def";
 
 interface ChoiceExamProps {
     questionGroup: QuestionGroup;

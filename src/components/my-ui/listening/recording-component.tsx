@@ -5,7 +5,7 @@ import TableExam from "@/components/my-ui/listening/table-exam";
 import ChoiceExam from "@/components/my-ui/listening/choice-exam";
 import DefaultExam from "@/components/my-ui/listening/default-exam";
 import React from "react";
-import {Result} from "@/components/util/result";
+import {Result} from "@/components/util/type-def";
 export const RecordingComponent = ({
                                 data,
                                 session,

@@ -13,11 +13,13 @@ import {
     createListCollection,
     Pagination,
     ButtonGroup,
-    IconButton,
-    Center,
+    Flex,
+    Button,
+    Center, IconButton,
 } from "@chakra-ui/react";
 import HistoryRecord from "@/components/my-ui/progress/HistoryRecord";
 import {HiChevronLeft, HiChevronRight} from "react-icons/hi2";
+import {HiChevronDown, HiChevronUp} from "react-icons/hi";
 
 interface HistoryRecordProps {
     data: HistoryData[];
@@ -31,7 +33,8 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
     const [searchTopic, setSearchTopic] = useState("");
     const [sortOrder, setSortOrder] = useState<string[]>(["desc"]);
     const [page, setPage] = useState(1)
-
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     const filteredData = data.filter(item => {
         const nameMatch = item.name.toLowerCase().includes(searchName.toLowerCase());
@@ -40,7 +43,12 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
         const topicMatch = !searchTopic || item.topics.some(t =>
             t.toLowerCase().includes(searchTopic.toLowerCase())
         );
-        return nameMatch && scoreMatch && typeMatch && topicMatch;
+
+        const itemDate = parseCustomDate(item.date);
+        const dateMatch = (!startDate || itemDate >= new Date(startDate)) &&
+            (!endDate || itemDate <= new Date(endDate));
+
+        return nameMatch && scoreMatch && typeMatch && topicMatch && dateMatch;
     }).sort((a, b) => {
         const dateA = parseCustomDate(a.date).getTime();
         const dateB = parseCustomDate(b.date).getTime();
@@ -58,7 +66,7 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
     );
 
     return <Box shadow={'md'} p={'2%'} mb={'2%'}>
-        <SimpleGrid columns={5} gap={'2.5%'}>
+        <SimpleGrid columns={{sm:1, md:3}} gap={'2.5%'}>
             <Field.Root>
                 <Field.Label>Name</Field.Label>
                 <Input
@@ -131,36 +139,35 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
                     onChange={(e) => setSearchTopic(e.target.value)}
                 />
             </Field.Root>
-            <Select.Root collection={orderOptions}
-                         value={sortOrder}
-                         onValueChange={(target) => {
-                             setSortOrder(target.value);
-                         }}>
-                <Select.HiddenSelect/>
-                <Select.Label>Order By</Select.Label>
-                <Select.Control>
-                    <Select.Trigger>
-                        <Select.ValueText placeholder="Select Sort Order"/>
-                    </Select.Trigger>
-                    <Select.IndicatorGroup>
-                        <Select.Indicator/>
-                    </Select.IndicatorGroup>
-                </Select.Control>
-                <Portal>
-                    <Select.Positioner>
-                        <Select.Content>
-                            {orderOptions.items.map((order) => (
-                                <Select.Item item={order} key={order.label}>
-                                    {order.label}
-                                    <Select.ItemIndicator/>
-                                </Select.Item>
-                            ))}
-                        </Select.Content>
-                    </Select.Positioner>
-                </Portal>
-            </Select.Root>
+            <Field.Root>
+                <Field.Label>From Date</Field.Label>
+                <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
+            </Field.Root>
+            <Field.Root>
+                <Field.Label>To Date</Field.Label>
+                <Input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                />
+            </Field.Root>
+
         </SimpleGrid>
-        <VStack mt={5}>
+        <Flex justifyContent={'right'} mt={2}>
+            <Button  variant={"ghost"} w={'20%'}
+                     onClick={() => { sortOrder.includes('asc')? setSortOrder(['desc']): setSortOrder(['asc'])}}
+            >
+                {sortOrder.includes('asc')?  'Sort Ascending' :'Sort Descending'}
+
+                {sortOrder.includes('asc')?  <HiChevronUp/> :  <HiChevronDown/>}
+            </Button >
+        </Flex>
+
+        <VStack mt={1}>
             {filteredData.length > 0 ? (
                 paginatedData.map(record => (
                     <HistoryRecord key={record.id} {...record} />
@@ -207,7 +214,6 @@ const HistoryComponent = ({data}: HistoryRecordProps) => {
             )}
         </Center>
 
-
     </Box>
 }
 
@@ -237,12 +243,6 @@ const scoreOptions = createListCollection({
         {label: "9", value: "9"}]
 })
 
-const orderOptions = createListCollection({
-    items: [
-        {label: "Ascending", value: "asc"},
-        {label: "Descending", value: "desc"},
-    ],
-})
 
 function parseCustomDate(dateStr: string): Date {
     const [datePart, timePart] = dateStr.split(' ');
@@ -257,6 +257,5 @@ function parseCustomDate(dateStr: string): Date {
         parseInt(minutes)
     );
 }
-
 
 export default HistoryComponent;

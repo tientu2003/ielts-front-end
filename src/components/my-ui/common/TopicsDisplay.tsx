@@ -7,22 +7,21 @@ interface TopicsDisplayProps {
     fontSize?: string,
 }
 
+export const getTopicColor = (topic: string): string => {
+    let hash = 0;
+    for (let i = 0; i < topic.length; i++) {
+        hash = topic.charCodeAt(i) + ((hash << 5) - hash);
+    }
 
+    const hue = Math.abs(hash % 360);
+    const saturation = 70;
+    const lightness = useColorMode().colorMode === 'dark' ? 60 : 45;
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
 
 const TopicsDisplay = ({topics, fontSize}: TopicsDisplayProps) => {
-    // write a function to get color from topic
-    const getTopicColor = (topic: string): string => {
-        let hash = 0;
-        for (let i = 0; i < topic.length; i++) {
-            hash = topic.charCodeAt(i) + ((hash << 5) - hash);
-        }
 
-        const hue = Math.abs(hash % 360);
-        const saturation = 70;
-        const lightness = useColorMode().colorMode === 'dark' ? 60 : 45;
-
-        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    }
 
     topics = Array.from(new Set(topics))
     return <Text

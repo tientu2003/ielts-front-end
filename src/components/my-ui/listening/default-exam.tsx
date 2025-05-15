@@ -1,7 +1,7 @@
 import {Box, Center, GridItem, SimpleGrid, Text, Card} from "@chakra-ui/react";
 import {QuestionGroup} from "./listening-exam";
 import {formatText} from "@/components/util/format-data";
-import {Result} from "@/components/util/result";
+import {Result} from "@/components/util/type-def";
 import ListeningInputDisplay from "@/components/my-ui/common/ListeningInputDisplay";
 
 interface DefaultExamProps {

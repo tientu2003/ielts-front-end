@@ -3,7 +3,7 @@ import {Box, GridItem, Heading, Input, SimpleGrid, Text} from "@chakra-ui/react"
 import {InputGroup} from "@/components/ui/input-group";
 import {Passage} from "@/components/my-ui/reading/reading-exam";
 import {formatText} from "@/components/util/format-data";
-import { Result } from "@/components/util/result";
+import { Result } from "@/components/util/type-def";
 
 
 const PassageComponent = ({

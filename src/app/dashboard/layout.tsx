@@ -28,64 +28,67 @@ export default async function ProcessLayout({children,}: Readonly<{ children: Re
                         </Card.Header>
                         <Card.Body>
                             <VStack>
-                                <Button variant={"ghost"}
+                                <a href={'/dashboard/account'} style={{width: '100%', justifyContent: 'left'}}>
+                                    <Button variant={"ghost"}
+                                            fontWeight={'bold'}
+                                            fontSize={'xl'}
+                                            w={'full'}
+                                            colorPalette={'green'}
+                                            justifyContent={'left'}>
+                                        <MdManageAccounts/>
+                                        Account
+                                    </Button>
+                                </a>
+                                <a href={'/dashboard/history'} style={{width: '100%', justifyContent: 'left'}}>
+                                    <Button
+                                        variant={"ghost"}
                                         fontWeight={'bold'}
                                         fontSize={'xl'}
                                         w={'full'}
                                         colorPalette={'green'}
                                         justifyContent={'left'}>
-                                    <MdManageAccounts/>
-                                    <a href={'/dashboard/account'}>
-                                        Account
-                                    </a>
-                                </Button>
-                                <Button
-                                    variant={"ghost"}
-                                    fontWeight={'bold'}
-                                    fontSize={'xl'}
-                                    w={'full'}
-                                    colorPalette={'green'}
-                                    justifyContent={'left'}>
-                                    <LuHistory/>
-                                    <a href={'/dashboard/history'}>
+                                        <LuHistory/>
                                         History
-                                    </a>
-                                </Button>
-                                <Button
-                                    variant={"ghost"}
-                                    fontWeight={'bold'}
-                                    fontSize={'xl'} w={'full'}
-                                    colorPalette={'green'}
-                                    justifyContent={'left'}>
-                                    <FaAssistiveListeningSystems/>
-                                    <a href={'/dashboard/listening-statistic'}>
+                                    </Button>
+                                </a>
+                                <a href={'/dashboard/listening-statistic'}
+                                   style={{width: '100%', justifyContent: 'left'}}>
+                                    <Button
+                                        variant={"ghost"}
+                                        fontWeight={'bold'}
+                                        fontSize={'xl'} w={'full'}
+                                        colorPalette={'green'}
+                                        justifyContent={'left'}>
+                                        <FaAssistiveListeningSystems/>
                                         Listening Statistic
-                                    </a>
-                                </Button>
-                                <Button
-                                    variant={"ghost"}
-                                    fontWeight={'bold'}
-                                    fontSize={'xl'}
-                                    w={'full'}
-                                    colorPalette={'green'}
-                                    justifyContent={'left'}>
-                                    <FaBookReader/>
-                                    <a href={'/dashboard/reading-statistic'}>
+                                    </Button>
+                                </a>
+                                <a href={'/dashboard/reading-statistic'}
+                                   style={{width: '100%', justifyContent: 'left'}}>
+                                    <Button
+                                        variant={"ghost"}
+                                        fontWeight={'bold'}
+                                        fontSize={'xl'}
+                                        w={'full'}
+                                        colorPalette={'green'}
+                                        justifyContent={'left'}>
+                                        <FaBookReader/>
                                         Reading Statistic
-                                    </a>
-                                </Button>
-                                <Button
-                                    variant={"ghost"}
-                                    fontWeight={'bold'}
-                                    fontSize={'xl'}
-                                    w={'full'}
-                                    colorPalette={'green'}
-                                    justifyContent={'left'}>
-                                    <TbWriting/>
-                                    <a href={'/dashboard/writing-statistic'}>
+                                    </Button>
+                                </a>
+                                <a href={'/dashboard/writing-statistic'}
+                                   style={{width: '100%', justifyContent: 'left'}}>
+                                    <Button
+                                        variant={"ghost"}
+                                        fontWeight={'bold'}
+                                        fontSize={'xl'}
+                                        w={'full'}
+                                        colorPalette={'green'}
+                                        justifyContent={'left'}>
+                                        <TbWriting/>
                                         Writing Statistic
-                                    </a>
-                                </Button>
+                                    </Button>
+                                </a>
                             </VStack>
                         </Card.Body>
                     </Card.Root>
