@@ -85,7 +85,7 @@ const TimelineChart = ({data, skill}: TimelineChartProps) => {
 
     return (
         <Card.Root pt={10} pr={10} pb={10} shadow="md" borderRadius="md">
-            <ButtonGroup spacing={4} mb={4} ml={4}>
+            <ButtonGroup mb={4} ml={4}>
                 <Button
                     variant={'ghost'}
                     onClick={() => setGroupBy('raw')}
