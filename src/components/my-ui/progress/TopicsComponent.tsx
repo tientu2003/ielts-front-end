@@ -73,7 +73,7 @@ const TopicsComponent = ({topics, tpi, skill}: TopicsComponentProps) => {
         <SimpleGrid mt={'2.5%'} columns={{sm:1, md:3}} gap={5}>
             {filteredData.length > 0 ? (
                 paginatedData.map((item, index) => (
-                        <TpiComponent data={item} skill={skill} size={'100%'}/>
+                        <TpiComponent key={index} data={item} skill={skill} size={'100%'}/>
                 ))
             ) : (
                 <Text>No topics found</Text>

@@ -1,6 +1,5 @@
 import {Box} from "@chakra-ui/react";
 import {SkillLanguageProficiency, Summary} from "@/components/util/type-def";
-import TpiComponent from "@/components/my-ui/progress/TpiComponent";
 import {HistoryData} from "@/app/dashboard/history/page";
 import TimelineChart from "@/components/my-ui/progress/TimelineChart";
 import SuggestionComponent from "@/components/my-ui/progress/SuggestionComponent";
@@ -18,7 +17,7 @@ const StatisticComponent = ({topics, summary, tpi, history, skill}: StatisticCom
     return <Box>
         <TimelineChart data={history} skill={skill} />
         <SuggestionComponent data={summary} skill={skill}/>
-        <TopicsComponent topics={topics} tpi={tpi} />
+        <TopicsComponent topics={topics} tpi={tpi} skill={skill} />
     </Box>
 }
 
