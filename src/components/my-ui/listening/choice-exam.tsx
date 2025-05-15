@@ -20,8 +20,8 @@ const ChoiceExam = ({questionGroup, answers, onInputChange, results}: ChoiceExam
                     {q.questionText === "null" || q.questionText === "" ? null :
                         <Heading pl={5}>{q.questionNumber + ". " + q.questionText}</Heading>}
                     {answers && onInputChange ?
-                        <RadioGroup key={q.questionNumber} value={answers[Number(q.questionNumber) - 1]}
-                                    onValueChange={(e) => onInputChange(Number(q.questionNumber) - 1, e.value)}>
+                        <RadioGroup key={q.questionNumber} value={answers[Number(q.questionNumber) - 1] ?? ''}
+                                    onValueChange={(e) => onInputChange(Number(q.questionNumber) - 1, e.value as string)}>
                             <Stack gap={2} pl={10} mt={4}>
                                 {q.answerOptions.map((op, i) => {
                                     return (
