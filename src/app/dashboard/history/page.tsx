@@ -77,6 +77,7 @@ const HistoryPage = async () => {
             ) : (
                 <>
                     Internal Error
+                    {e instanceof Error ? e.message : 'Unknown error occurred'}
                 </>
             )}
         </AbsoluteCenter>)

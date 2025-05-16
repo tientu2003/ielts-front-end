@@ -80,6 +80,7 @@ const ListeningStatisticPage = async () => {
     } catch (e) {
         return (<AbsoluteCenter>
             Internal Error
+            {e instanceof Error ? e.message : 'Unknown error occurred'}
         </AbsoluteCenter>)
     }
 }
