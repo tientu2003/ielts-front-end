@@ -44,6 +44,7 @@ const ReadingExamPage = async ({params,}:
             <AbsoluteCenter>
                 <Heading>
                     Internal Error!!
+                    {error instanceof Error ? error.message : 'Unknown error occurred'}
                 </Heading>
             </AbsoluteCenter>
         </Box>)

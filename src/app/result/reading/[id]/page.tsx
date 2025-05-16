@@ -295,6 +295,7 @@ const ReadingPracticeResult = async ({params,}:
         console.error(e)
         return <AbsoluteCenter>
             Internal Error
+            {e instanceof Error ? e.message : 'Unknown error occurred'}
         </AbsoluteCenter>
     }
 }
