@@ -1,3 +1,4 @@
+'use client'
 import {SpeakingDetailResult} from "@/components/util/speaking-types";
 import {Box, VStack, Heading, Text, Button} from "@chakra-ui/react";
 import {useState} from "react";
