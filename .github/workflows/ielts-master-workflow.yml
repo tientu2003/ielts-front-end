@@ -40,6 +40,10 @@ jobs:
           --build-arg NEXT_PUBLIC_WRITING_SERVICE_URL="${{ secrets.NEXT_PUBLIC_WRITING_SERVICE_URL }}" \
           --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" \
           --build-arg NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }}" \
+          --build-arg SPEAKING_SERVICE_URL="${{ secrets.SPEAKING_SERVICE_URL }}" \
+          --build-arg AZURE_STORAGE_ACCOUNT="${{ secrets.AZURE_STORAGE_ACCOUNT }}" \
+          --build-arg AZURE_CONTAINER_NAME="${{ secrets.AZURE_CONTAINER_NAME }}" \
+          --build-arg NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }}" \
           -t ${{ secrets.DOCKER_USERNAME }}/english-master:latest . \
           --push
   deploy:
