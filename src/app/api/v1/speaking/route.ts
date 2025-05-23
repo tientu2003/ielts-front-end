@@ -15,7 +15,7 @@ export async function POST(req:Request){
         },
         body: req.body,
         duplex: "half"
-    })
+    } as RequestInit)
 
     const id:string = await response.text();
     return NextResponse.json({ id: id });
