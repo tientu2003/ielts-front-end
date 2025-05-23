@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental:{
     optimizePackageImports: ["@chakra-ui/react"],
+    ppr: 'incremental',
+    serverActions: {
+      bodySizeLimit: '20mb',
+    },
   },
   images: {
     remotePatterns: [

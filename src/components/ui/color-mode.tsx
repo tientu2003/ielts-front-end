@@ -1,5 +1,4 @@
-"use client"
-
+'use client'
 import type { IconButtonProps } from "@chakra-ui/react"
 import { IconButton, Skeleton } from "@chakra-ui/react"
 import { ThemeProvider, useTheme } from "next-themes"
