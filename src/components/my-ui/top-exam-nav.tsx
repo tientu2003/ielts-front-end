@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from "react";
 import { Flex, Heading, Highlight, SimpleGrid } from "@chakra-ui/react";
 import { ColorModeButton } from "@/components/ui/color-mode";
@@ -45,7 +46,7 @@ const TopExamNav = (props: TopExamNavProps) => {
     };
 
     return (
-        <SimpleGrid columns={2} padding={4}>
+        <SimpleGrid columns={2} padding={4} shadow={'md'}>
             <Heading fontFamily="'Dancing Script', cursive" fontSize="4xl">
                 <Link href={"/"}>
                     <Highlight query={"English Master"} styles={{ color: "teal.500" }}>

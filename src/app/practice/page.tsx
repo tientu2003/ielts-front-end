@@ -49,7 +49,12 @@ async function getData() {
         'writing'
     );
 
-    return [...readingData, ...listeningData, ...writingData];
+    const speakingData = await fetchExamData(
+        process.env.SPEAKING_SERVICE_URL!,
+        'speaking'
+    );
+
+    return [...readingData, ...listeningData, ...writingData, ...speakingData];
 }
 
 export default async function PracticePage() {
@@ -59,4 +64,3 @@ export default async function PracticePage() {
         <ClientPracticePageComponent initialData={initialData}/>
     );
 }
-
