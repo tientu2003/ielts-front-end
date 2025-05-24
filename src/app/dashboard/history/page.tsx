@@ -31,9 +31,9 @@ const HistoryPage = async () => {
         </Box>)
     }
 
-    let listResponse, readResponse, writingResponse;
+    let listResponse, readResponse, writingResponse, speakingResponse;
     try {
-        [listResponse, readResponse, writingResponse] = await Promise.all([
+        [listResponse, readResponse, writingResponse, speakingResponse] = await Promise.all([
             fetch(`${process.env.NEXT_PUBLIC_LISTENING_SERVICE_URL}/api/listening/user/answer`, {
                 method: 'GET',
                 headers: {
@@ -54,19 +54,28 @@ const HistoryPage = async () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session.access_token}`,
                 }
+            }),
+            fetch(`${process.env.SPEAKING_SERVICE_URL}/api/speaking/user/answer`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
+                }
             })
-        ]) as [Response, Response, Response];
+        ]) as [Response, Response, Response, Response];
 
-        const [listData, readData, writingData] = await Promise.all([
+        const [listData, readData, writingData, speakingData] = await Promise.all([
             listResponse.json(),
             readResponse.json(),
-            writingResponse.json()
+            writingResponse.json(),
+            speakingResponse.json(),
         ]);
 
         const data: HistoryData[] = [
             ...listData.map((item: Omit<HistoryData, 'type'>) => ({...item, type: 'listening'})),
             ...readData.map((item: Omit<HistoryData, 'type'>) => ({...item, type: 'reading'})),
-            ...writingData.map((item: Omit<HistoryData, 'type'>) => ({...item, type: 'writing'}))
+            ...writingData.map((item: Omit<HistoryData, 'type'>) => ({...item, type: 'writing'})),
+            ...speakingData.map((item: Omit<HistoryData, 'type'>) => ({...item, type: 'speaking'})),
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         return <HistoryComponent data={data} />
