@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {getAccessToken, getSessionUser} from "@/components/util/auth";
 
 
-const speakingServiceUrl = process.env.SPEAKING_SERVICE_URL;
+const speakingServiceUrl = process.env.NEXT_PUBLIC_SPEAKING_SERVICE_URL;
 export async function POST(req:Request){
     const accessToken = await getAccessToken();
     const user_id = await getSessionUser();

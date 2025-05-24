@@ -22,7 +22,7 @@ const SpeakingResultPage = async ({ params }: { params: Promise<{ id: string }> 
   }
 
   try {
-    const response = await fetch(`${process.env.SPEAKING_SERVICE_URL}/api/speaking/user/answer/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SPEAKING_SERVICE_URL}/api/speaking/user/answer/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
