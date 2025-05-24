@@ -11,7 +11,8 @@ import {
     Accordion,
     HStack,
     Grid, Flex,
-    Center, VStack,
+    Center, VStack,ProgressCircle,
+    Stack
 } from "@chakra-ui/react";
 import ContextPart from "@/components/my-ui/writing/context-part";
 import {getServerSession} from "next-auth";
@@ -118,6 +119,17 @@ const WritingExamResult = async ({params,}:
 
         const data = await response.json()
 
+        if (data.finalScore === null) return  <Center>
+            <Stack h={'80vh'}>
+                <ProgressCircle.Root value={null} size="xl">
+                    <ProgressCircle.Circle>
+                        <ProgressCircle.Track />
+                        <ProgressCircle.Range />
+                    </ProgressCircle.Circle>
+                </ProgressCircle.Root>
+            </Stack>
+
+        </Center>
         const answer: string = data.userAnswer.join("\n");
         const bandScoreColor = getScoreColor(data.finalScore);
 
