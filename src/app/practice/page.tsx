@@ -50,7 +50,7 @@ async function getData() {
     );
 
     const speakingData = await fetchExamData(
-        process.env.SPEAKING_SERVICE_URL!,
+        process.env.NEXT_PUBLIC_SPEAKING_SERVICE_URL!,
         'speaking'
     );
 

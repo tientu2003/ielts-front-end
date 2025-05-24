@@ -55,7 +55,7 @@ const HistoryPage = async () => {
                     'Authorization': `Bearer ${session.access_token}`,
                 }
             }),
-            fetch(`${process.env.SPEAKING_SERVICE_URL}/api/speaking/user/answer`, {
+            fetch(`${process.env.NEXT_PUBLIC_SPEAKING_SERVICE_URL}/api/speaking/user/answer`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
