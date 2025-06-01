@@ -72,7 +72,7 @@ const WritingStatisticPage = async () => {
         const history_data: HistoryData[] = await history_response.json();
 
         return <Card.Root shadow={'md'} w={'100%'} p={'2.5%'}>
-            <StatisticComponent topics={topic_data} summary={summary_data} tpi={tpi_data} history={history_data} skill={'Listening'} />
+            <StatisticComponent topics={topic_data} summary={summary_data} tpi={tpi_data} history={history_data} skill={'Writing'} />
         </Card.Root>
     } catch (e) {
         return (<AbsoluteCenter>
