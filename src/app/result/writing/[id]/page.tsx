@@ -135,8 +135,9 @@ const WritingExamResult = async ({params,}:
                 <Center>
                     <Heading>The scoring process is still in progress.</Heading>
                 </Center>
-
-                <Text>If the result does not appear after one minute, please report it to the admin.</Text>
+                <Center>
+                    <Text>If the result does not appear after one minute, please report it to the admin.</Text>
+                </Center>
                 {typeof window !== 'undefined' && (setTimeout(() => window.location.reload(), 30000), null)}
                 <SimpleGrid columns={2} height={'90vh'} gap={5}>
                     <GridItem colSpan={1}>
