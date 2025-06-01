@@ -50,7 +50,7 @@ export default function Home() {
                     <TopNav/>
                     <Container>
                         <Container centerContent={true}>
-                            <Image rounded="md" src="/assets/welcome.png" alt="Welcome" width="100%"/>
+                            <Image rounded="md" src="/assets/welcome.png" alt="Welcome" width="70%"/>
                         </Container>
                         <Box marginLeft={10} marginTop={10}>
                             <Heading fontSize="5xl" padding={2} >

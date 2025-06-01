@@ -119,18 +119,59 @@ const WritingExamResult = async ({params,}:
 
         const data = await response.json()
 
-        if (data.finalScore === null) return  <Center>
+        const answer: string = data.userAnswer.join("\n");
+
+        if (data.finalScore == null) return <Center>
             <Stack h={'80vh'}>
-                <ProgressCircle.Root value={null} size="xl">
-                    <ProgressCircle.Circle>
-                        <ProgressCircle.Track />
-                        <ProgressCircle.Range />
-                    </ProgressCircle.Circle>
-                </ProgressCircle.Root>
+                <Center>
+                    <ProgressCircle.Root value={null} size="xl" mt={'15vh'} colorPalette={'green'}>
+                        <ProgressCircle.Circle>
+                            <ProgressCircle.Track/>
+                            <ProgressCircle.Range/>
+                        </ProgressCircle.Circle>
+
+                    </ProgressCircle.Root>
+                </Center>
+                <Center>
+                    <Heading>The scoring process is still in progress.</Heading>
+                </Center>
+
+                <Text>If the result does not appear after one minute, please report it to the admin.</Text>
+
+                {typeof window !== 'undefined' && setTimeout(() => window.location.reload(), 30000)}
+
+                <SimpleGrid columns={2} height={'90vh'} gap={5}>
+                    <GridItem colSpan={1}>
+                        <Box mt={"2.5vh"}
+                             h="85vh">
+                            <ContextPart task={data.task} context={data.context} url={data.diagram_url}
+                                         name={data.name}/>
+                        </Box>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                        <Box mt={"2.5vh"}
+                             h="85vh">
+                            <Card.Root h={'100%'} shadow={'lg'}>
+                                <Card.Header>
+                                    <Text textAlign={'right'} mr={6}>
+                                        Words: {countWords(answer)}
+                                    </Text>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Textarea placeholder="Start writing your essay here..."
+                                              h={'100%'}
+                                              readOnly={true}
+                                              value={answer}
+                                    />
+                                </Card.Body>
+                            </Card.Root>
+                        </Box>
+                    </GridItem>
+                </SimpleGrid>
             </Stack>
 
         </Center>
-        const answer: string = data.userAnswer.join("\n");
+
         const bandScoreColor = getScoreColor(data.finalScore);
 
         const sections = [
