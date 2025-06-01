@@ -86,7 +86,7 @@ const ReadingExamComponent = ({data}: ReadingExamComponentProps) => {
     };
 
     return (
-        <Tabs.Root variant="enclosed" divideY={'2px'} value={value} onValueChange={(e) => setValue(e.value)}>
+        <Tabs.Root variant="enclosed" mt={-4} value={value} onValueChange={(e) => setValue(e.value)}>
             <Tabs.Content value="first">
                 <PassageComponent data={data[0]}
                                   startIndex={0}

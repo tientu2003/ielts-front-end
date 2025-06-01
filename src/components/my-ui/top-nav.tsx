@@ -26,7 +26,6 @@ const TopNav = () => (
             <Link href={'/dashboard/history'}>
                 <Button fontWeight={"medium"} fontSize={'xl'} variant={'ghost'}  width={150}>Progress</Button>
             </Link>
-            <Button fontWeight={"medium"} fontSize={'xl'} variant={'ghost'}  width={150}>Resources</Button>
             <ColorModeButton/>
             <AccountLogin />
         </Flex>

@@ -4,9 +4,8 @@ import {Button} from "@/components/ui/button";
 import React from "react";
 import {Avatar} from "@/components/ui/avatar";
 import {signOut, useSession} from "next-auth/react";
-import LoadingComponent from "@/components/my-ui/Loading";
 import {MenuRoot} from "@/components/ui/menu";
-import {MenuContent, MenuItem, MenuTrigger, Flex, Stack} from "@chakra-ui/react";
+import {MenuContent, MenuItem, MenuTrigger, Flex, Stack, SkeletonCircle} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
 const AccountLogin = () => {
@@ -15,7 +14,7 @@ const AccountLogin = () => {
     const {data: session, status} = useSession();
 
     if (status === "loading") {
-        return <LoadingComponent/>
+        return <SkeletonCircle size="10" />
     }
     if (status === "unauthenticated") {
         return <Link href="/auth/login">
