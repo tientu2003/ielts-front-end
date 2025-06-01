@@ -137,9 +137,7 @@ const WritingExamResult = async ({params,}:
                 </Center>
 
                 <Text>If the result does not appear after one minute, please report it to the admin.</Text>
-
-                {typeof window !== 'undefined' && setTimeout(() => window.location.reload(), 30000)}
-
+                {typeof window !== 'undefined' && (setTimeout(() => window.location.reload(), 30000), null)}
                 <SimpleGrid columns={2} height={'90vh'} gap={5}>
                     <GridItem colSpan={1}>
                         <Box mt={"2.5vh"}
