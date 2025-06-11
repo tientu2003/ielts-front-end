@@ -1,7 +1,7 @@
 'use client'
 import {Summary} from "@/components/util/type-def";
 import TpiComponent from "@/components/my-ui/progress/TpiComponent";
-import {Box, Card, Flex, Button, Text, HStack} from "@chakra-ui/react";
+import {Box, Card, Flex, Button, Text, HStack, VStack, Heading, List} from "@chakra-ui/react";
 import React, {useState} from "react";
 import {useColorMode} from "@/components/ui/color-mode";
 import TopicsDisplay from "@/components/my-ui/common/TopicsDisplay";
@@ -64,6 +64,106 @@ const SuggestionComponent = ({data, skill}: SuggestionComponentProps) => {
         });
     };
 
+    // Enhanced function to parse and render the recommendation text
+    const renderRecommendationContent = (content: string) => {
+        const lines = content.split('\n').filter(line => line.trim() !== '');
+        const elements: React.ReactNode[] = [];
+        let listItems: React.ReactNode[] = [];
+        let inList = false;
+
+        const isHeader = (line: string) => {
+            const trimmed = line.trim();
+            return (trimmed.startsWith('**') && trimmed.endsWith('**'));
+        };
+
+        const renderTextWithFormatting = (text: string) => {
+            const parts = text.split(/(\*\*[^*]+\*\*)/g);
+            return parts.map((part, index) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                    return (
+                        <Text key={index} as="span" fontWeight="bold">
+                            {part.replace(/\*\*/g, '')}
+                        </Text>
+                    );
+                }
+                return part;
+            });
+        };
+
+        lines.forEach((line, index) => {
+            const trimmedLine = line.trim();
+
+            if (isHeader(trimmedLine)) {
+                // Close any open list
+                if (inList && listItems.length > 0) {
+                    elements.push(
+                        <List.Root key={`list-${index}`} mb={4}>
+                            {listItems}
+                        </List.Root>
+                    );
+                    listItems = [];
+                    inList = false;
+                }
+
+                const headerText = trimmedLine.replace(/\*\*/g, '');
+                elements.push(
+                    <Heading
+                        key={`header-${index}`}
+                        size="2xl"
+                        mb={3}
+                        mt={index > 0 ? 6 : 0}
+                        color={config.color}
+                    >
+                        {headerText}
+                    </Heading>
+                );
+            }
+            // Handle numbered list items
+            else if (/^\d+\.\s/.test(trimmedLine)) {
+                if (!inList) {
+                    inList = true;
+                }
+
+                const listContent = trimmedLine.replace(/^\d+\.\s/, '');
+                listItems.push(
+                    <List.Item key={`list-item-${index}`} mb={2} ml={5}>
+                        <Text>{renderTextWithFormatting(listContent)}</Text>
+                    </List.Item>
+                );
+            }
+            // Handle regular paragraphs
+            else if (trimmedLine.length > 0) {
+                // Close any open list
+                if (inList && listItems.length > 0) {
+                    elements.push(
+                        <List.Root key={`list-${index}`} mb={4}>
+                            {listItems}
+                        </List.Root>
+                    );
+                    listItems = [];
+                    inList = false;
+                }
+
+                elements.push(
+                    <Text key={`text-${index}`} mb={3} lineHeight="1.6">
+                        {renderTextWithFormatting(trimmedLine)}
+                    </Text>
+                );
+            }
+        });
+
+        // Close any remaining open list
+        if (inList && listItems.length > 0) {
+            elements.push(
+                <List.Root key="final-list" mb={4}>
+                    {listItems}
+                </List.Root>
+            );
+        }
+
+        return elements;
+    };
+
     return <Box>
         <Flex justify={'space-between'} mt={'2.5%'} direction={'row'} w={'100%'} gap={5}>
             <Card.Root
@@ -109,7 +209,6 @@ const SuggestionComponent = ({data, skill}: SuggestionComponentProps) => {
                 </Card.Header>
                 <Card.Title pl={'4%'} mt={2} mb={-3} fontSize={'xl'} maxW={'90%'}>{data.testName}</Card.Title>
                 <Card.Body mt={'-2.5%'}>
-
                     <TopicsDisplay topics={data.topics}/>
                     <Link href={`/exam/${skill.toLowerCase()}/${data.nextTestId}`} passHref>
                         <Button
@@ -125,25 +224,23 @@ const SuggestionComponent = ({data, skill}: SuggestionComponentProps) => {
             </Card.Root>
             <TpiComponent data={data.skillLanguageProficiency} skill={skill} size={'40%'}/>
         </Flex>
-        {data.personalRecommendation &&
+        {/* Use the sample listening recommendation instead of data.personalRecommendation */}
         <Card.Root mt={'2.5%'} shadow={'md'} w={'100%'}>
             <Card.Header>
-                <HStack direction={'row'}>
+                <HStack direction={'row'} mb={4}>
                     <FaRobot size={50}/>
                     <Text fontSize={'2xl'} fontWeight={'bold'}>
                         AI-Based Recommendation
                     </Text>
                 </HStack>
-                <Card.Body >
-                    <Text fontSize={'xl'}>
-                        {data.personalRecommendation}
-                    </Text>
-                </Card.Body>
             </Card.Header>
-        </Card.Root>}
+            <Card.Body pt={0}>
+                <VStack align="start">
+                    {renderRecommendationContent(data.personalRecommendation)}
+                </VStack>
+            </Card.Body>
+        </Card.Root>
     </Box>
-
-
 }
 
 export default SuggestionComponent;

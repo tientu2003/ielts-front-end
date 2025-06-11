@@ -1,117 +1,197 @@
+
 'use client'
 import {SpeakingDetailResult} from "@/components/util/speaking-types";
-import {Box, VStack, Heading, Text, Button} from "@chakra-ui/react";
-import {useState, useRef} from "react";
+import {Box, VStack, Heading, Text, Accordion, Flex} from "@chakra-ui/react";
+import {useState, useEffect} from "react";
+import {IoIosArrowDown} from "react-icons/io";
 
 interface SpeakingResultProps {
     data: SpeakingDetailResult;
 }
 
 const SpeakingResult = ({data}: SpeakingResultProps) => {
-    const [isPlaying, setIsPlaying] = useState<string>("");
-    const [audioUrl, setAudioUrl] = useState<string>("");
-    const audioRef = useRef<HTMLAudioElement>(null);
+    const [audioUrls, setAudioUrls] = useState<{[key: string]: string}>({});
 
-    const playAudio = async (blobUrl: string) => {
+    const loadAudioUrl = async (blobUrl: string): Promise<string> => {
+        // Check if we already have this audio URL cached
+        if (audioUrls[blobUrl]) {
+            return audioUrls[blobUrl];
+        }
+
         try {
-            // If the same audio is clicked again while playing, pause it
-            if (isPlaying === blobUrl && audioRef.current) {
-                audioRef.current.pause();
-                setIsPlaying("");
-                return;
-            }
-
             const response = await fetch(`/api/blob/download?blobUrl=${encodeURIComponent(blobUrl)}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch audio');
             }
             const blob = await response.blob();
+            const audioUrl = URL.createObjectURL(blob);
 
-            // Revoke previous URL if it exists
-            if (audioUrl) {
-                URL.revokeObjectURL(audioUrl);
-            }
+            // Cache the URL
+            setAudioUrls(prev => ({...prev, [blobUrl]: audioUrl}));
 
-            const newAudioUrl = URL.createObjectURL(blob);
-            setAudioUrl(newAudioUrl);
-            setIsPlaying(blobUrl);
-
-            if (audioRef.current) {
-                audioRef.current.src = newAudioUrl;
-                await audioRef.current.play();
-            }
+            return audioUrl;
         } catch (error) {
-            console.error("Error playing audio:", error);
-            setIsPlaying("");
+            console.error("Error loading audio:", error);
+            return "";
         }
     };
 
-    const handleAudioEnded = () => {
-        setIsPlaying("");
-        if (audioUrl) {
-            URL.revokeObjectURL(audioUrl);
-            setAudioUrl("");
-        }
+    // Cleanup URLs when component unmounts
+    useEffect(() => {
+        return () => {
+            Object.values(audioUrls).forEach(url => {
+                URL.revokeObjectURL(url);
+            });
+        };
+    }, [audioUrls]);
+
+    const AudioPlayer = ({blobUrl}: {blobUrl: string}) => {
+        const [audioSrc, setAudioSrc] = useState<string>("");
+        const [isLoading, setIsLoading] = useState<boolean>(false);
+
+        const handleLoadAudio = async () => {
+            if (audioSrc) return; // Already loaded
+
+            setIsLoading(true);
+            const url = await loadAudioUrl(blobUrl);
+            setAudioSrc(url);
+            setIsLoading(false);
+        };
+
+        // Auto-load audio when accordion is opened
+        useEffect(() => {
+            handleLoadAudio();
+        }, []);
+
+        return (
+            <Box mt={2}>
+                {!audioSrc ? (
+                    <Text color="gray.500" fontSize="sm">
+                        {isLoading ? 'Loading audio...' : 'Audio will load when expanded'}
+                    </Text>
+                ) : (
+                    <audio
+                        controls
+                        style={{width: '100%', marginTop: '8px'}}
+                        preload="metadata"
+                    >
+                        <source src={audioSrc} type="audio/mpeg" />
+                        <source src={audioSrc} type="audio/wav" />
+                        <source src={audioSrc} type="audio/ogg" />
+                        Your browser does not support the audio element.
+                    </audio>
+                )}
+            </Box>
+        );
     };
+
+    const createAccordionItems = () => {
+        const items = [];
+
+        // Part One items
+        if (data.partOne && data.partOne.length > 0) {
+            data.partOne.forEach((answer) => {
+                items.push({
+                    value: `part1-${answer.number}`,
+                    title: `Part 1 - Question ${answer.number}`,
+                    question: answer.question,
+                    topic: answer.topic,
+                    url: answer.url
+                });
+            });
+        }
+
+        // Part Two item
+        if (data.partTwo) {
+            items.push({
+                value: 'part2',
+                title: 'Part 2 - Long Turn',
+                question: data.partTwo.question,
+                topic: data.partTwo.topic,
+                url: data.partTwo.url
+            });
+        }
+
+        // Part Three items
+        if (data.partThree && data.partThree.length > 0) {
+            data.partThree.forEach((answer) => {
+                items.push({
+                    value: `part3-${answer.number}`,
+                    title: `Part 3 - Question ${answer.number}`,
+                    question: answer.question,
+                    topic: answer.topic,
+                    url: answer.url
+                });
+            });
+        }
+
+        return items;
+    };
+
+    const accordionItems = createAccordionItems();
 
     return (
-        <VStack p={8}>
-            <audio
-                ref={audioRef}
-                onEnded={handleAudioEnded}
-                onPause={() => setIsPlaying("")}
-                style={{ display: 'none' }}
-            />
-            <Heading size="lg">{data.testName}</Heading>
-            <Text fontSize="xl">Overall Score: {data.score}</Text>
-            {data.partOne && data.partOne.length > 0 &&
-                <Box w="full">
-                    <Heading size="md" mb={4}>Part 1</Heading>
-                    {data.partOne.map((answer) => (
-                        <Box key={answer.number} mb={4} p={4} borderWidth={1} borderRadius="lg">
-                            <Text fontWeight="bold">Question {answer.number}: {answer.question}</Text>
-                            <Text mb={2}>Topic: {answer.topic}</Text>
-                            <Button
-                                onClick={() => playAudio(answer.url)}
-                                loading={isPlaying === answer.url}
-                            >
-                                {isPlaying === answer.url ? "Playing..." : "Play Recording"}
-                            </Button>
-                        </Box>
+        <VStack p={8} m={6}>
+            <VStack m={6}>
+                <Heading size="lg" color="blue.600">{data.testName}</Heading>
+                <Text fontSize="xl" fontWeight="semibold">Overall Score: {data.score}</Text>
+            </VStack>
+
+            <Box w="full">
+                <Accordion.Root collapsible defaultValue={[]} variant="enclosed">
+                    {accordionItems.map((item) => (
+                        <Accordion.Item key={item.value} value={item.value}>
+                            <Accordion.ItemTrigger>
+                                <Flex
+                                    justify="space-between"
+                                    alignItems="center"
+                                    width="full"
+                                    borderColor="blue.500"
+                                    borderWidth={1}
+                                    borderRadius="md"
+                                    p={3}
+                                    bg="blue.50"
+                                    _dark={{
+                                        bg: 'blue.900',
+                                        _hover: {bg: 'blue.800'}
+                                    }}
+                                    _light={{
+                                        bg: 'blue.50',
+                                        _hover: {bg: 'blue.100'}
+                                    }}
+                                    cursor="pointer"
+                                    transition="all 0.2s"
+                                >
+                                    <VStack align="start" m={1}>
+                                        <Text fontWeight="bold" color="blue.700">
+                                            {item.title}
+                                        </Text>
+                                        <Text fontSize="sm" color="gray.600">
+                                            Topic: {item.topic}
+                                        </Text>
+                                    </VStack>
+                                    <Accordion.ItemIndicator>
+                                        <IoIosArrowDown/>
+                                    </Accordion.ItemIndicator>
+                                </Flex>
+                            </Accordion.ItemTrigger>
+                            <Accordion.ItemContent>
+                                <Accordion.ItemBody>
+                                    <Box p={4} bg="gray.50" borderRadius="md" mt={2}>
+                                        <Text fontWeight="bold" mb={2}>
+                                            Question: {item.question}
+                                        </Text>
+                                        <Text mb={3} color="gray.600">
+                                            Topic: {item.topic}
+                                        </Text>
+                                        <AudioPlayer blobUrl={item.url} />
+                                    </Box>
+                                </Accordion.ItemBody>
+                            </Accordion.ItemContent>
+                        </Accordion.Item>
                     ))}
-                </Box>}
-            {data.partTwo &&
-                <Box w="full">
-                    <Heading size="md" mb={4}>Part 2</Heading>
-                    <Box p={4} borderWidth={1} borderRadius="lg">
-                        <Text fontWeight="bold">Topic: {data.partTwo.topic}</Text>
-                        <Text mb={2}>{data.partTwo.question}</Text>
-                        <Button
-                            onClick={() => playAudio(data.partTwo.url)}
-                            loading={isPlaying === data.partTwo.url}
-                        >
-                            {isPlaying === data.partTwo.url ? "Playing..." : "Play Recording"}
-                        </Button>
-                    </Box>
-                </Box>
-            }
-            {data.partThree && data.partThree.length > 0 &&
-                <Box w="full">
-                    <Heading size="md" mb={4}>Part 3</Heading>
-                    {data.partThree.map((answer) => (
-                        <Box key={answer.number} mb={4} p={4} borderWidth={1} borderRadius="lg">
-                            <Text fontWeight="bold">Question {answer.number}: {answer.question}</Text>
-                            <Text mb={2}>Topic: {answer.topic}</Text>
-                            <Button
-                                onClick={() => playAudio(answer.url)}
-                                loading={isPlaying === answer.url}
-                            >
-                                {isPlaying === answer.url ? "Playing..." : "Play Recording"}
-                            </Button>
-                        </Box>
-                    ))}
-                </Box>
-            }
+                </Accordion.Root>
+            </Box>
         </VStack>
     );
 };
