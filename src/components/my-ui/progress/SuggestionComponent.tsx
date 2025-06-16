@@ -209,7 +209,7 @@ const SuggestionComponent = ({data, skill}: SuggestionComponentProps) => {
                 </Card.Header>
                 <Card.Title pl={'4%'} mt={2} mb={-3} fontSize={'xl'} maxW={'90%'}>{data.testName}</Card.Title>
                 <Card.Body mt={'-2.5%'}>
-                    <TopicsDisplay topics={data.topics}/>
+                    <TopicsDisplay topics={data.testTopics}/>
                     <Link href={`/exam/${skill.toLowerCase()}/${data.nextTestId}`} passHref>
                         <Button
                             variant={'ghost'}

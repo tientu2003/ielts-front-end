@@ -9,6 +9,7 @@ export interface Summary{
     personalRecommendation: string,
     nextTestId: string,
     testName: string,
+    testTopics: string[],
     topics: string[],
     skillLanguageProficiency: SkillLanguageProficiency
 }
