@@ -11,12 +11,29 @@ interface SpeakingResultProps {
 
 const SpeakingResult = ({data}: SpeakingResultProps) => {
     const [audioUrls, setAudioUrls] = useState<{[key: string]: string}>({});
+    const [loadingStates, setLoadingStates] = useState<{[key: string]: boolean}>({});
 
     const loadAudioUrl = async (blobUrl: string): Promise<string> => {
         // Check if we already have this audio URL cached
         if (audioUrls[blobUrl]) {
             return audioUrls[blobUrl];
         }
+
+        // Check if we're already loading this URL
+        if (loadingStates[blobUrl]) {
+            // Wait for the loading to complete
+            return new Promise((resolve) => {
+                const checkInterval = setInterval(() => {
+                    if (audioUrls[blobUrl]) {
+                        clearInterval(checkInterval);
+                        resolve(audioUrls[blobUrl]);
+                    }
+                }, 100);
+            });
+        }
+
+        // Set loading state
+        setLoadingStates(prev => ({...prev, [blobUrl]: true}));
 
         try {
             const response = await fetch(`/api/blob/download?blobUrl=${encodeURIComponent(blobUrl)}`);
@@ -26,12 +43,14 @@ const SpeakingResult = ({data}: SpeakingResultProps) => {
             const blob = await response.blob();
             const audioUrl = URL.createObjectURL(blob);
 
-            // Cache the URL
+            // Cache the URL and clear loading state
             setAudioUrls(prev => ({...prev, [blobUrl]: audioUrl}));
+            setLoadingStates(prev => ({...prev, [blobUrl]: false}));
 
             return audioUrl;
         } catch (error) {
             console.error("Error loading audio:", error);
+            setLoadingStates(prev => ({...prev, [blobUrl]: false}));
             return "";
         }
     };
@@ -46,28 +65,28 @@ const SpeakingResult = ({data}: SpeakingResultProps) => {
     }, [audioUrls]);
 
     const AudioPlayer = ({blobUrl}: {blobUrl: string}) => {
-        const [audioSrc, setAudioSrc] = useState<string>("");
-        const [isLoading, setIsLoading] = useState<boolean>(false);
+        const [hasTriedLoading, setHasTriedLoading] = useState<boolean>(false);
 
         const handleLoadAudio = async () => {
-            if (audioSrc) return; // Already loaded
+            if (hasTriedLoading) return; // Prevent multiple loading attempts
 
-            setIsLoading(true);
-            const url = await loadAudioUrl(blobUrl);
-            setAudioSrc(url);
-            setIsLoading(false);
+            setHasTriedLoading(true);
+            await loadAudioUrl(blobUrl);
         };
 
-        // Auto-load audio when accordion is opened
+        // Auto-load audio when component mounts
         useEffect(() => {
             handleLoadAudio();
-        }, []);
+        }, [blobUrl]);
+
+        const isLoading = loadingStates[blobUrl] || false;
+        const audioSrc = audioUrls[blobUrl] || "";
 
         return (
             <Box mt={2}>
                 {!audioSrc ? (
                     <Text color="gray.500" fontSize="sm">
-                        {isLoading ? 'Loading audio...' : 'Audio will load when expanded'}
+                        {isLoading ? 'Loading audio...' : 'Loading audio...'}
                     </Text>
                 ) : (
                     <audio

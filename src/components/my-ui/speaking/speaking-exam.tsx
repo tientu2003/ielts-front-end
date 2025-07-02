@@ -121,6 +121,8 @@ const SpeakingExamComponent: React.FC<SpeakingExamComponentProps> = ({
             });
             const audioInfo =  await Promise.all(uploadPromises);
 
+            const sortedAudioInfos = audioInfo.sort((a, b) => a.questionId - b.questionId);
+
             setExamState('completed');
             
             let payload:SpeakingExamSubmission = {
@@ -132,18 +134,18 @@ const SpeakingExamComponent: React.FC<SpeakingExamComponentProps> = ({
             }
 
             if (data.type === 1) {
-                payload.answersOne = audioInfo.map((e) => {
+                payload.answersOne = sortedAudioInfos.map((e) => {
                     return {
                         number: e.questionId,
                         url: e.blobName,
-                        topic: data.partOne[e.questionId].topic,
-                        question: data.partOne[e.questionId].question
+                        topic: data.partOne[e.questionId-1].topic,
+                        question: data.partOne[e.questionId-1].question
                     }
                 });
             } else {
                 payload.answersTwo = {
-                    number: audioInfo[0].questionId,
-                    url: audioInfo[0].blobName,
+                    number: -1,
+                    url: sortedAudioInfos[0].blobName,
                     topic: data.partTwo.topic,
                     question: data.partTwo.question
                 }
@@ -151,8 +153,8 @@ const SpeakingExamComponent: React.FC<SpeakingExamComponentProps> = ({
                     return {
                         number: e.questionId,
                         url: e.blobName,
-                        topic: data.partThree[e.questionId].topic,
-                        question: data.partThree[e.questionId].question
+                        topic: data.partThree[e.questionId-1].topic,
+                        question: data.partThree[e.questionId-1].question
                     }
                 });
 
